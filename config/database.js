@@ -36,7 +36,11 @@ const connectDB = async () => {
 
     } catch (error) {
         logger.error(`MongoDB connection failed: ${error.message}`);
-        process.exit(1);
+        if (process.env.NODE_ENV === 'production') {
+            process.exit(1);
+        } else {
+            logger.warn('Running in development mode without MongoDB. Some DB features will be unavailable.');
+        }
     }
 }
 module.exports = connectDB;
