@@ -11,7 +11,7 @@ const protect = (req,res,next)=>{
             })
         }
 
-        let decoded = jwt.verify(token, process.env.JWT_SECRET || 'RestaurantSecretKey123!');
+        let decoded = jwt.verify(token, process.env.JWT_SECRET);
         // let user = await User.findOne({ email : decoded.email }).select("-password");
         req.user = decoded;
         next();
