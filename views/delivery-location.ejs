@@ -1,0 +1,81 @@
+<%- include('partials/delivery-header') %>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-weight: 800; font-size: 1.75rem;">Live Location Tracker</h2>
+  <p class="text-muted">Transmit your active GPS coordinates to customers and restaurants.</p>
+</div>
+
+<div class="glass-card">
+  <div id="map" style="height: 350px; border-radius: 16px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); background: #0b1528;"></div>
+  
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <span class="text-muted" style="font-size:0.8rem; display:block;">Current Coordinates</span>
+      <strong id="coordsText" style="color:white; font-size:0.95rem;"><%= coords[1] %>, <%= coords[0] %></strong>
+    </div>
+    
+    <button class="btn btn-primary" onclick="simulateLocationUpdate()">
+      <i class="fa-solid fa-location-crosshairs"></i> Refresh Position
+    </button>
+  </div>
+</div>
+
+<script>
+  let map;
+  let marker;
+  const initialCoords = [<%= coords[1] %>, <%= coords[0] %>]; // [lat, lng]
+
+  document.addEventListener('DOMContentLoaded', () => {
+    map = L.map('map', {
+      center: initialCoords,
+      zoom: 14
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(map);
+
+    const riderIcon = L.divIcon({
+      className: 'custom-rider-icon',
+      html: '<div style="background:var(--accent-color); border:2px solid white; width:20px; height:20px; border-radius:50%; box-shadow: 0 0 10px var(--accent-color);"></div>',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10]
+    });
+
+    marker = L.marker(initialCoords, { icon: riderIcon }).addTo(map);
+  });
+
+  async function simulateLocationUpdate() {
+    // Generate slight random variation for visual feedback
+    const deltaLat = (Math.random() - 0.5) * 0.005;
+    const deltaLng = (Math.random() - 0.5) * 0.005;
+    const newLat = initialCoords[0] + deltaLat;
+    const newLng = initialCoords[1] + deltaLng;
+    
+    document.getElementById('coordsText').innerText = `${newLat.toFixed(5)}, ${newLng.toFixed(5)}`;
+    
+    if (marker && map) {
+      const newPos = [newLat, newLng];
+      marker.setLatLng(newPos);
+      map.panTo(newPos);
+
+      // Transmit to API
+      try {
+        await fetch('/api/v1/delivery/location', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ latitude: newLat, longitude: newLng })
+        });
+      } catch (err) {
+        console.error('Failed to post location to backend:', err);
+      }
+    }
+  }
+</script>
+
+<%- include('partials/delivery-footer') %>

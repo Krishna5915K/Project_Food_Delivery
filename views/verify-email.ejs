@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - FoodClone</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <main>
+    <div class="glass-card">
+      <div style="margin-bottom: 2rem;">
+        <% if (success) { %>
+          <i class="fa-solid fa-circle-check" style="color:#10b981; font-size:4rem; margin-bottom: 1rem;"></i>
+          <h2>Verification Successful</h2>
+          <p class="text-muted" style="margin-bottom: 1.5rem;"><%= message %></p>
+          <a href="/login" class="btn btn-primary">Go to Login</a>
+        <% } else { %>
+          <i class="fa-solid fa-circle-xmark" style="color:#ef4444; font-size:4rem; margin-bottom: 1rem;"></i>
+          <h2>Verification Failed</h2>
+          <p class="text-muted" style="margin-bottom: 1.5rem;"><%= message %></p>
+          <a href="/login" class="btn btn-secondary">Back to Login</a>
+        <% } %>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

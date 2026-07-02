@@ -53,6 +53,11 @@ const restaurantSchema = new mongoose.Schema({
     enum: ['open', 'closed', 'busy'],
     default: 'closed'
   },
+  platform: {
+    type: String,
+    enum: ['Zomato', 'Swiggy', 'both'],
+    default: 'both'
+  },
   logo: {
     type: String,
     default: ''

@@ -1,0 +1,100 @@
+<%- include('partials/header') %>
+
+<div style="margin-bottom: 2.5rem;">
+  <h2 style="font-weight: 800; font-size: 2rem;">Edit Profile</h2>
+  <p class="text-muted">Update your account username, phone, or upload a new profile picture.</p>
+</div>
+
+<div class="glass-card" style="max-width:550px; margin: 0 auto;">
+  <div id="alert" class="auth-alert-message"></div>
+
+  <form id="edit-profile-form" enctype="multipart/form-data">
+    <div class="form-group" style="align-items:center; text-align:center; margin-bottom:2rem;">
+      <img id="avatar-preview" src="<%= user.profileImage || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150' %>" style="width:100px; height:100px; object-fit:cover; border-radius:50%; border:2px solid var(--accent-color); margin-bottom:1rem;" alt="avatar">
+      <label for="profileImage" class="btn btn-secondary btn-sm" style="width:auto; cursor:pointer;">
+        <i class="fa-solid fa-camera"></i> Change Photo
+      </label>
+      <input type="file" id="profileImage" name="profileImage" accept="image/*" style="display:none;" onchange="previewFile()">
+    </div>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" class="form-input" value="<%= user.name %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" class="form-input" value="<%= user.phone || '' %>" required>
+    </div>
+
+    <div style="display:flex; gap:1rem; margin-top:2rem;">
+      <a href="/profile" class="btn btn-secondary" style="flex:1;">Cancel</a>
+      <button type="submit" id="submitBtn" class="btn btn-primary" style="flex:1;">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function previewFile() {
+    const preview = document.getElementById('avatar-preview');
+    const file = document.getElementById('profileImage').files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+      preview.src = reader.result;
+    }, false);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }
+
+  document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const alertDiv = document.getElementById('alert');
+    alertDiv.style.display = 'none';
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    const formData = new FormData();
+    formData.append('name', document.getElementById('name').value.trim());
+    formData.append('phone', document.getElementById('phone').value.trim());
+    
+    const fileInput = document.getElementById('profileImage');
+    if (fileInput.files.length > 0) {
+      formData.append('profileImage', fileInput.files[0]);
+    }
+
+    try {
+      const res = await fetch('/api/v1/users/profile', {
+        method: 'PUT',
+        body: formData
+      });
+      const json = await res.json();
+      if (json.success) {
+        alertDiv.className = 'auth-alert-message success';
+        alertDiv.innerText = json.message || 'Profile updated successfully!';
+        alertDiv.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = '/profile';
+        }, 1500);
+      } else {
+        alertDiv.className = 'auth-alert-message error';
+        alertDiv.innerText = json.message || 'Failed to update profile.';
+        alertDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Save Changes';
+      }
+    } catch (err) {
+      alertDiv.className = 'auth-alert-message error';
+      alertDiv.innerText = 'Server error. Try again.';
+      alertDiv.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = 'Save Changes';
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>

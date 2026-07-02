@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+
+<div class="hero">
+  <h2>Hungry? Order Food From Your Favorite Restaurants 🍕</h2>
+  <p>Discover fresh cuisines, fast deliveries, and standard premium meals right to your doorstep.</p>
+</div>
+
+<!-- Search Bar -->
+<form action="/restaurants" method="GET" class="search-container">
+  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+  <input name="search" type="text" class="search-input" placeholder="Search restaurants or cuisines...">
+</form>
+
+<!-- Categories Bar -->
+<div style="margin-bottom: 3rem; text-align: center;">
+  <h3 style="margin-bottom: 1.25rem; font-weight: 700;">Browse by Category</h3>
+  <div class="category-filters" style="justify-content: center; flex-wrap: wrap; gap: 0.75rem;">
+    <% if (locals.categories && categories.length > 0) { %>
+      <% categories.forEach(cat => { %>
+        <a href="/restaurants?cuisine=<%= cat.name %>&view=dishes" class="category-chip" style="text-decoration: none;">
+          <%= cat.name %>
+        </a>
+      <% }) %>
+    <% } else { %>
+      <!-- Simple fallback categories for localhost -->
+      <a href="/restaurants?cuisine=Italian&view=dishes" class="category-chip" style="text-decoration: none;">🇮🇹 Italian</a>
+      <a href="/restaurants?cuisine=Chinese&view=dishes" class="category-chip" style="text-decoration: none;">🥢 Chinese</a>
+      <a href="/restaurants?cuisine=Indian&view=dishes" class="category-chip" style="text-decoration: none;">🍛 Indian</a>
+      <a href="/restaurants?cuisine=Fast Food&view=dishes" class="category-chip" style="text-decoration: none;">🍟 Fast Food</a>
+      <a href="/restaurants?cuisine=Desserts&view=dishes" class="category-chip" style="text-decoration: none;">🧁 Desserts</a>
+      <a href="/restaurants?cuisine=Beverages&view=dishes" class="category-chip" style="text-decoration: none;">🥤 Beverages</a>
+      <a href="/restaurants?cuisine=Pizza&view=dishes" class="category-chip" style="text-decoration: none;">🍕 Pizza</a>
+      <a href="/restaurants?cuisine=Burgers&view=dishes" class="category-chip" style="text-decoration: none;">🍔 Burgers</a>
+    <% } %>
+  </div>
+</div>
+
+<!-- Featured Restaurants -->
+<div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h2 style="font-weight: 800; letter-spacing: -0.5px;">Featured Restaurants</h2>
+    <a href="/restaurants" style="color:var(--accent-color); text-decoration:none; font-weight:700;">View All <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
+
+  <div class="grid-3">
+    <% if (locals.restaurants && restaurants.length > 0) { %>
+      <% restaurants.slice(0, 6).forEach(res => { %>
+        <div class="glass-card" onclick="window.location.href='/restaurants/<%= res._id %>'" style="cursor:pointer;">
+          <img src="<%= res.logo || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500' %>" class="food-card-img" alt="<%= res.name %>">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <h3 style="font-size: 1.15rem; font-weight:700;"><%= res.name %></h3>
+            <span style="color:#ffa502; font-weight:700;"><i class="fa-solid fa-star"></i> <%= res.averageRating || 'N/A' %></span>
+          </div>
+          <p class="text-muted" style="font-size: 0.8rem; margin: 0.25rem 0 0.75rem;"><%= res.address %></p>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size: 0.85rem; border-top:1px solid var(--border-color); padding-top:0.75rem;">
+            <span><i class="fa-solid fa-clock"></i> <%= res.deliveryTimeMinutes %> mins</span>
+            <span>Min. order: ₹<%= res.minOrderAmount %></span>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+        <p class="text-muted">No restaurants available. Run the DB Seeder to load restaurants.</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

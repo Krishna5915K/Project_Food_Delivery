@@ -11,9 +11,9 @@ const addonSchema = new mongoose.Schema({
         required: [true, 'Please provide addon price'],
         min: 0
     },
-    menuItem: {
+    food: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'MenuItem',
+        ref: 'Food',
         required: true
     }
 }, {

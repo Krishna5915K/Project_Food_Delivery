@@ -1,0 +1,51 @@
+<%- include('partials/admin-header') %>
+
+<div style="margin-bottom: 2rem;">
+  <p class="text-muted">Browse the global menu item registry across all approved restaurant partners.</p>
+</div>
+
+<div class="table-card">
+  <table>
+    <thead>
+      <tr>
+        <th>Food Item</th>
+        <th>Restaurant</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Availability</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% foods.forEach(food => { %>
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <% if (food.image) { %>
+                <img src="<%= food.image %>" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" alt="">
+              <% } %>
+              <strong><%= food.name %></strong>
+            </div>
+          </td>
+          <td><%= food.restaurant ? food.restaurant.name : 'N/A' %></td>
+          <td><%= food.category ? food.category.name : 'N/A' %></td>
+          <td>
+            <% if (food.isVeg) { %>
+              <span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-circle"></i> Veg</span>
+            <% } else { %>
+              <span style="color:#ef4444; font-weight:600;"><i class="fa-solid fa-circle"></i> NonVeg</span>
+            <% } %>
+          </td>
+          <td style="font-weight:700;">₹<%= food.price %></td>
+          <td>
+            <span class="badge <%= food.isAvailable ? 'badge-success' : 'badge-danger' %>">
+              <%= food.isAvailable ? 'Available' : 'Unavailable' %>
+            </span>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/admin-footer') %>

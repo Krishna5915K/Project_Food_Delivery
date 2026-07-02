@@ -1,0 +1,99 @@
+<%- include('partials/owner-header') %>
+
+<div class="glass-card" style="max-width:650px; margin:0 auto;">
+  <div id="alert" class="auth-alert-message"></div>
+
+  <form id="restaurant-details-form" style="display:flex; flex-direction:column; gap:1.25rem;">
+    <div class="form-group">
+      <label for="name">Restaurant Name</label>
+      <input type="text" id="name" class="form-input" value="<%= restaurant.name %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description / Tagline</label>
+      <input type="text" id="description" class="form-input" value="<%= restaurant.description || '' %>">
+    </div>
+
+    <div class="form-group">
+      <label for="address">Store Location Address</label>
+      <input type="text" id="address" class="form-input" value="<%= restaurant.address %>" required>
+    </div>
+
+    <div class="form-group">
+      <label for="cuisineType">Cuisines served (Comma-separated)</label>
+      <input type="text" id="cuisineType" class="form-input" value="<%= restaurant.cuisineType ? restaurant.cuisineType.join(', ') : '' %>" placeholder="e.g. North Indian, Chinese">
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div class="form-group">
+        <label for="status">Kitchen Status</label>
+        <select id="status" class="form-select">
+          <option value="open" <%= restaurant.status === 'open' ? 'selected' : '' %>>Open</option>
+          <option value="closed" <%= restaurant.status === 'closed' ? 'selected' : '' %>>Closed</option>
+          <option value="busy" <%= restaurant.status === 'busy' ? 'selected' : '' %>>Busy</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="deliveryTimeMinutes">Est. Delivery Time (Minutes)</label>
+        <input type="number" id="deliveryTimeMinutes" class="form-input" value="<%= restaurant.deliveryTimeMinutes %>" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="minOrderAmount">Minimum Checkout Amount (₹)</label>
+      <input type="number" id="minOrderAmount" class="form-input" value="<%= restaurant.minOrderAmount %>" required>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn btn-primary" style="margin-top:1rem;">Update Restaurant Info</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('restaurant-details-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const alertDiv = document.getElementById('alert');
+    alertDiv.style.display = 'none';
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      cuisineType: document.getElementById('cuisineType').value.trim(),
+      status: document.getElementById('status').value,
+      deliveryTimeMinutes: document.getElementById('deliveryTimeMinutes').value,
+      minOrderAmount: document.getElementById('minOrderAmount').value
+    };
+
+    try {
+      const res = await fetch('/api/v1/owner/restaurant', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.success) {
+        alertDiv.className = 'auth-alert-message success';
+        alertDiv.innerText = 'Restaurant details updated successfully!';
+        alertDiv.style.display = 'block';
+      } else {
+        alertDiv.className = 'auth-alert-message error';
+        alertDiv.innerText = json.message || 'Error updating details.';
+        alertDiv.style.display = 'block';
+      }
+    } catch (err) {
+      alertDiv.className = 'auth-alert-message error';
+      alertDiv.innerText = 'Server error.';
+      alertDiv.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Update Restaurant Info';
+    }
+  });
+</script>
+
+<%- include('partials/owner-footer') %>

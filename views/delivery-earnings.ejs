@@ -1,0 +1,43 @@
+<%- include('partials/delivery-header') %>
+
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-weight: 800; font-size: 1.75rem;">My Earnings</h2>
+  <p class="text-muted">Track your daily deliveries payout and wallet balances.</p>
+</div>
+
+<div class="glass-card" style="text-align: center; padding: 2.5rem 1.5rem;">
+  <span class="text-muted" style="font-size:0.85rem; display:block; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:1px;">Total Wallet Balance</span>
+  <h1 style="font-size: 3rem; font-weight: 800; color: var(--accent-color); margin-bottom: 0.5rem;">₹<%= totalEarnings %></h1>
+  <p class="text-muted" style="font-size: 0.9rem;">Auto-disbursed weekly on every Monday.</p>
+</div>
+
+<div class="grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom: 1.5rem;">
+  <div class="glass-card" style="margin-bottom: 0;">
+    <span class="text-muted" style="font-size:0.8rem; display:block; margin-bottom:0.25rem;">Deliveries Completed</span>
+    <h3 style="font-size:1.5rem; font-weight:800; color:white;"><%= completedCount %></h3>
+  </div>
+  <div class="glass-card" style="margin-bottom: 0;">
+    <span class="text-muted" style="font-size:0.8rem; display:block; margin-bottom:0.25rem;">Rate per Run</span>
+    <h3 style="font-size:1.5rem; font-weight:800; color:white;">₹40.00</h3>
+  </div>
+</div>
+
+<div class="glass-card">
+  <h3 style="font-size:1.15rem; font-weight:800; color:white; margin-bottom:1rem;"><i class="fa-solid fa-file-invoice-dollar" style="color:var(--accent-color);"></i> Payout Formula</h3>
+  <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.9rem; color:var(--text-secondary);">
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+      <span>Base Delivery Fee</span>
+      <span style="color:white; font-weight:600;">₹40.00 per trip</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+      <span>Incentives / Surge</span>
+      <span style="color:white; font-weight:600;">₹0.00</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-weight:700; color:white; padding-top:0.25rem;">
+      <span>Total Paid Out</span>
+      <span style="color:var(--accent-color);">₹<%= totalEarnings %></span>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/delivery-footer') %>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - FoodClone</title>
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);">
+  <main>
+    <div class="glass-card" style="border-color: rgba(59, 130, 246, 0.25);">
+      <div style="margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-user-shield" style="color:#3b82f6; font-size:3rem; margin-bottom: 0.5rem;"></i>
+        <h2>Admin Console</h2>
+        <p class="text-muted">Enter administrative credentials to access system backends.</p>
+      </div>
+
+      <div id="alert" class="auth-alert-message"></div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label for="email">Admin Email ID</label>
+          <input id="email" type="email" class="form-input" placeholder="admin@foodclone.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Security Password</label>
+          <input id="password" type="password" class="form-input" placeholder="••••••••" required>
+        </div>
+
+        <button id="submitBtn" class="btn btn-primary" style="background-color:#3b82f6;" type="submit">Access Console</button>
+      </form>
+
+      <div class="auth-links" style="justify-content: center;">
+        <a href="/login">&larr; Return to main site login</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alertDiv = document.getElementById('alert');
+      alertDiv.style.display = 'none';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking credentials...';
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const json = await res.json();
+        if (json.success) {
+          if (json.role === 'admin') {
+            window.location.href = '/admin/dashboard';
+          } else {
+            alertDiv.className = 'auth-alert-message error';
+            alertDiv.innerText = 'Access Denied: You do not have administrator permissions.';
+            alertDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = 'Access Console';
+          }
+        } else {
+          alertDiv.className = 'auth-alert-message error';
+          alertDiv.innerText = json.message || 'Invalid credentials';
+          alertDiv.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = 'Access Console';
+        }
+      } catch (err) {
+        alertDiv.className = 'auth-alert-message error';
+        alertDiv.innerText = 'Server error. Try again.';
+        alertDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Access Console';
+      }
+    });
+  </script>
+</body>
+</html>

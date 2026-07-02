@@ -1,0 +1,39 @@
+<%- include('partials/owner-header') %>
+
+<div style="margin-bottom: 2.5rem;">
+  <p class="text-muted">Track completed delivery orders, calculate business margins, and audit payout records.</p>
+</div>
+
+<div class="grid-2">
+  <div class="glass-card" style="padding:2rem;">
+    <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:1.5rem;"><i class="fa-solid fa-calculator" style="color:var(--success-color);"></i> Business Breakdown</h3>
+    
+    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+        <span class="text-muted">Successful Orders Handled</span>
+        <strong style="color:white; font-size:1.1rem;"><%= totalSales %></strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+        <span class="text-muted">Gross Restaurant Revenue</span>
+        <strong style="color:var(--success-color); font-size:1.25rem;">₹<%= revenue %></strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding-bottom:0.75rem;">
+        <span class="text-muted">Commission Fee (10% standard admin fee)</span>
+        <strong style="color:var(--danger-color); font-size:1.1rem;">- ₹<%= (revenue * 0.1).toFixed(2) %></strong>
+      </div>
+      <hr style="border-color: var(--border-color); margin:0.5rem 0;">
+      <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.15rem;">
+        <span>Net Partner Payout</span>
+        <strong class="price">₹<%= (revenue * 0.9).toFixed(2) %></strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding:2rem; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <i class="fa-solid fa-money-bill-trend-up" style="font-size:3rem; color:var(--success-color); margin-bottom:1rem;"></i>
+    <h3>Weekly Growth Matrix</h3>
+    <p class="text-muted" style="margin-top:0.5rem;">Your kitchen is performing perfectly on localhost! Keep active status open to receive more runs from customers.</p>
+  </div>
+</div>
+
+<%- include('partials/owner-footer') %>

@@ -1,0 +1,72 @@
+<%- include('partials/delivery-header') %>
+
+<div class="glass-card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h2 style="font-size:1.4rem; font-weight:800; color:white;">Rider Status</h2>
+      <p class="text-muted" style="font-size:0.85rem; margin-top:0.25rem;">Vehicle: <%= deliveryProfile ? deliveryProfile.vehicleType.toUpperCase() : 'BIKE' %> &bull; <%= deliveryProfile ? deliveryProfile.vehicleNumber : 'N/A' %></p>
+    </div>
+    
+    <div>
+      <span class="btn btn-secondary btn-sm" style="pointer-events:none; border-color:var(--accent-color); color:var(--accent-color); font-weight:800; text-transform:uppercase;">
+        <i class="fa-solid fa-circle-dot"></i> <%= deliveryProfile ? deliveryProfile.status : 'ONLINE' %>
+      </span>
+    </div>
+  </div>
+</div>
+
+<h3 style="font-size:1.25rem; font-weight:800; margin: 1.5rem 0 1rem;"><i class="fa-solid fa-truck-ramp-box" style="color:var(--accent-color);"></i> Active Assigned Orders</h3>
+
+<div style="display:flex; flex-direction:column; gap:1rem;">
+  <% if (assignedOrders && assignedOrders.length > 0) { %>
+    <% assignedOrders.forEach(o => { %>
+      <div class="order-card">
+        <div class="order-title">
+          <span>Order #<%= o._id.toString().slice(-6).toUpperCase() %></span>
+          <span style="font-weight:700; color:var(--accent-color);">₹<%= o.totalAmount %></span>
+        </div>
+        
+        <div style="font-size:0.9rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:0.5rem; margin:0.25rem 0;">
+          <div><i class="fa-solid fa-store"></i> Restaurant: <strong style="color:white;"><%= o.restaurant ? o.restaurant.name : 'Unknown' %></strong></div>
+          <div><i class="fa-solid fa-location-dot"></i> Pickup/Drop Address: <span style="color:white;"><%= o.deliveryAddress %></span></div>
+          <div><i class="fa-solid fa-clock"></i> Status: <span style="color:var(--accent-color); font-weight:700; text-transform:uppercase;"><%= o.orderStatus.replace('_', ' ') %></span></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:0.75rem; display:flex; gap:0.5rem; margin-top:0.5rem;">
+          <% if (o.orderStatus === 'confirmed' || o.orderStatus === 'preparing') { %>
+            <button class="btn btn-primary" onclick="updateStatus('<%= o._id %>', 'out_for_delivery')">Mark Out For Delivery</button>
+          <% } else if (o.orderStatus === 'out_for_delivery') { %>
+            <button class="btn btn-primary" style="background-color:#10b981;" onclick="updateStatus('<%= o._id %>', 'delivered')">Mark Delivered</button>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="glass-card" style="text-align:center; padding:2rem;">
+      <i class="fa-solid fa-clipboard-check" style="font-size:2.5rem; color:var(--text-secondary); margin-bottom:1rem;"></i>
+      <p class="text-muted">No active runs assigned to you right now. Stay online!</p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  async function updateStatus(orderId, newStatus) {
+    try {
+      const res = await fetch(`/api/v1/delivery/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        window.location.reload();
+      } else {
+        alert(json.message || 'Error updating status.');
+      }
+    } catch (err) {
+      alert('Network error.');
+    }
+  }
+</script>
+
+<%- include('partials/delivery-footer') %>

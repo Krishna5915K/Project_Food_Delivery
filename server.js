@@ -6,13 +6,30 @@ const errorHandler = require('./utils/errorHandler');
 
 app.use(errorHandler);
 
+const Restaurant = require('./models/Restaurant');
+const Food = require('./models/Food');
+const seedData = require('./utils/seeder');
+
+const autoSeed = async () => {
+    try {
+        const foodCount = await Food.countDocuments();
+        const restaurantCount = await Restaurant.countDocuments();
+        const hasOldPlatform = await Restaurant.exists({ platform: 'FoodClone' });
+        if (foodCount < 50 || restaurantCount === 0 || hasOldPlatform) {
+            logger.info('Database has insufficient or outdated data. Automatically seeding 160 Swiggy & Zomato items...');
+            await seedData(false);
+        }
+    } catch (err) {
+        logger.error(`Auto-seeding check failed: ${err.message}`);
+    }
+};
+
 const startServer = async () => {
-    if (process.env.NODE_ENV !== 'production') {
-        connectDB().catch(err => {
-            logger.error(`Database connection failed: ${err.message}`);
-        });
-    } else {
+    try {
         await connectDB();
+        await autoSeed();
+    } catch (err) {
+        logger.error(`Database connection failed: ${err.message}`);
     }
     
     const PORT = parseInt(process.env.PORT, 10) || 555;

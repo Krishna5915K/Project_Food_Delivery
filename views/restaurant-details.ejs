@@ -1,0 +1,143 @@
+<%- include('partials/header') %>
+
+<div style="position:relative; margin-bottom: 2rem;">
+  <img src="<%= restaurant.banner || 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1000' %>" class="restaurant-banner-img" alt="<%= restaurant.name %> banner">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:1rem;">
+    <div>
+      <h2 style="font-size:2rem; font-weight:800; margin-bottom:0.5rem;"><%= restaurant.name %></h2>
+      <p class="text-muted"><i class="fa-solid fa-location-dot"></i> <%= restaurant.address %></p>
+      <div style="margin-top:0.5rem;">
+        <% restaurant.cuisineType.forEach(c => { %>
+          <span class="cuisine-tag"><%= c %></span>
+        <% }) %>
+      </div>
+    </div>
+    
+    <div class="glass-card" style="padding: 1rem; border-radius:12px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+      <span style="font-size: 1.5rem; font-weight:800; color:#ffa502;"><i class="fa-solid fa-star"></i> <%= restaurant.averageRating || '0.0' %></span>
+      <span class="text-muted" style="font-size: 0.75rem;"><%= restaurant.totalRatings %> ratings</span>
+    </div>
+  </div>
+</div>
+
+<hr style="border-color: var(--border-color); margin: 2rem 0;">
+
+<!-- Menu Grid -->
+<div class="grid-2">
+  <div>
+    <h3 style="font-size:1.5rem; font-weight:800; margin-bottom:1.5rem;">Menu Items</h3>
+
+    <div class="category-filters">
+      <button class="category-chip active" onclick="filterMenu('all')">All Items</button>
+      <% categories.forEach(cat => { %>
+        <button class="category-chip" onclick="filterMenu('<%= cat._id %>')"><%= cat.name %></button>
+      <% }) %>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+      <% if (foods && foods.length > 0) { %>
+        <% foods.forEach(food => { %>
+          <div class="glass-card food-item-card" data-category="<%= food.category %>" style="display:flex; gap:1.5rem; align-items:center; padding:1.25rem;">
+            <% if (food.image) { %>
+              <img src="<%= food.image %>" style="width:100px; height:100px; object-fit:cover; border-radius:12px;" alt="<%= food.name %>">
+            <% } %>
+            <div style="flex:1;">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <h4 style="font-size:1.15rem; font-weight:700;"><%= food.name %></h4>
+                <% if (food.isVeg) { %>
+                  <span style="color:#10b981; font-size:0.75rem;"><i class="fa-solid fa-circle"></i> Veg</span>
+                <% } else { %>
+                  <span style="color:#ef4444; font-size:0.75rem;"><i class="fa-solid fa-circle"></i> Non-Veg</span>
+                <% } %>
+              </div>
+              <p class="text-muted" style="font-size:0.85rem; margin:0.25rem 0 0.5rem;"><%= food.description %></p>
+              <span class="price">₹<%= food.price %></span>
+            </div>
+            <div>
+              <% if (food.isAvailable) { %>
+                <button class="btn btn-primary btn-sm" onclick="addToCart('<%= food._id %>')">
+                  <i class="fa-solid fa-plus"></i> Add to Cart
+                </button>
+              <% } else { %>
+                <button class="btn btn-secondary btn-sm" disabled>Out of stock</button>
+              <% } %>
+              <div style="text-align:center; margin-top:0.5rem;">
+                <a href="/foods/<%= food._id %>" style="font-size:0.75rem; color:var(--text-secondary); text-decoration:none;">View details</a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-muted">No menu items available for this restaurant.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Cart Preview Sidebar / Quick Specs -->
+  <div>
+    <div class="glass-card" style="position:sticky; top:100px;">
+      <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:1rem;"><i class="fa-solid fa-circle-info" style="color:var(--accent-color);"></i> Restaurant Info</h3>
+      <div style="display:flex; flex-direction:column; gap:1rem; font-size:0.9rem; margin-top:1rem;">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+          <span class="text-muted">Status</span>
+          <span style="text-transform:capitalize; font-weight:700;" class="<%= restaurant.status === 'open' ? 'price' : '' %>"><%= restaurant.status %></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+          <span class="text-muted">Delivery Speed</span>
+          <span>~<%= restaurant.deliveryTimeMinutes %> mins</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">
+          <span class="text-muted">Minimum Order</span>
+          <span>₹<%= restaurant.minOrderAmount %></span>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;">
+        <a href="/cart" class="btn btn-secondary w-100"><i class="fa-solid fa-cart-shopping"></i> Review Checkout Cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterMenu(categoryId) {
+    const cards = document.querySelectorAll('.food-item-card');
+    const chips = document.querySelectorAll('.category-chip');
+    
+    // Update active chip
+    chips.forEach(chip => {
+      if (chip.getAttribute('onclick').includes(categoryId)) {
+        chip.classList.add('active');
+      } else {
+        chip.classList.remove('active');
+      }
+    });
+
+    cards.forEach(card => {
+      if (categoryId === 'all' || card.getAttribute('data-category') === categoryId) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  async function addToCart(foodId) {
+    try {
+      const res = await fetch('/api/v1/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ foodId, quantity: 1 })
+      });
+      const json = await res.json();
+      if (json.success) {
+        alert('Food added to cart successfully!');
+      } else {
+        alert(json.message || 'Could not add to cart.');
+      }
+    } catch (err) {
+      alert('Error connecting to server. Try again.');
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>

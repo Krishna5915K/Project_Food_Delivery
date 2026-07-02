@@ -1,0 +1,74 @@
+<%- include('partials/owner-header') %>
+
+<% if (restaurant) { %>
+  <div style="margin-bottom:2rem; background:rgba(255,165,2,0.05); padding:1rem 1.5rem; border-radius:12px; border:1.5px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <h3 style="font-size:1.15rem; font-weight:800; color:white;"><%= restaurant.name %></h3>
+      <p class="text-muted" style="font-size:0.85rem;"><i class="fa-solid fa-location-dot"></i> <%= restaurant.address %></p>
+    </div>
+    <div>
+      <span class="badge badge-success" style="text-transform:uppercase;"><%= restaurant.status %></span>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Dishes Listed</span>
+      <span class="stat-val"><%= stats.foodCount %></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Total Orders</span>
+      <span class="stat-val" style="color:var(--accent-color);"><%= stats.orderCount %></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Gross Revenue</span>
+      <span class="stat-val" style="color:var(--success-color);">₹<%= stats.revenue %></span>
+    </div>
+  </div>
+
+  <!-- Recent Orders Table -->
+  <div class="table-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+      <h3 style="font-size:1.2rem; font-weight:800;"><i class="fa-solid fa-circle-play" style="color:var(--accent-color);"></i> Recent Orders</h3>
+      <a href="/owner/orders" class="btn btn-secondary btn-sm">Process Orders &rarr;</a>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Total Value</th>
+          <th>Order Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (recentOrders && recentOrders.length > 0) { %>
+          <% recentOrders.forEach(o => { %>
+            <tr>
+              <td><code>#<%= o._id.toString().slice(-6).toUpperCase() %></code></td>
+              <td><%= o.user ? o.user.name : 'Guest' %></td>
+              <td style="font-weight:700;">₹<%= o.totalAmount %></td>
+              <td>
+                <span class="badge badge-warning" style="text-transform:uppercase;"><%= o.orderStatus.replace('_', ' ') %></span>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="4" style="text-align:center; color:var(--text-secondary);">No orders received yet.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+<% } else { %>
+  <div class="glass-card" style="text-align:center; padding:3rem;">
+    <i class="fa-solid fa-store-slash" style="font-size:3rem; color:var(--text-secondary); margin-bottom:1.5rem;"></i>
+    <h3>No Restaurant Registered</h3>
+    <p class="text-muted" style="margin-top:0.5rem; margin-bottom:2rem;">Your account is not yet linked to any partner kitchen. Please contact the administrator for approval and listing creation.</p>
+  </div>
+<% } %>
+
+<%- include('partials/owner-footer') %>

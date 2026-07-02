@@ -1,0 +1,82 @@
+<%- include('partials/admin-header') %>
+
+<div style="margin-bottom: 2rem;">
+  <p class="text-muted">Dispatch placed orders, coordinate delivery riders, and trace status reports.</p>
+</div>
+
+<div class="table-card">
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Restaurant</th>
+        <th>Total Amount</th>
+        <th>Order Status</th>
+        <th>Assigned Rider</th>
+        <th>Assign Rider</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(o => { %>
+        <tr>
+          <td><code>#<%= o._id.toString().slice(-6).toUpperCase() %></code></td>
+          <td><strong><%= o.user ? o.user.name : 'Guest' %></strong></td>
+          <td><%= o.restaurant ? o.restaurant.name : 'Unknown' %></td>
+          <td style="font-weight:700;">₹<%= o.totalAmount %></td>
+          <td>
+            <span class="badge badge-info"><%= o.orderStatus.replace('_', ' ') %></span>
+          </td>
+          <td>
+            <%= o.deliveryBoy ? o.deliveryBoy.name : 'Unassigned' %>
+          </td>
+          <td>
+            <% if (!o.deliveryBoy && o.orderStatus !== 'cancelled' && o.orderStatus !== 'delivered') { %>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <select id="rider-select-<%= o._id %>" class="form-select" style="padding:0.35rem 0.5rem; width:150px; font-size:0.85rem;">
+                  <option value="">Select Rider</option>
+                  <% deliveryBoys.forEach(d => { %>
+                    <option value="<%= d._id %>"><%= d.name %></option>
+                  <% }) %>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="assignRider('<%= o._id %>')">Assign</button>
+              </div>
+            <% } else { %>
+              <span class="text-muted" style="font-size:0.85rem;">Complete / Dispatched</span>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  async function assignRider(orderId) {
+    const riderSelect = document.getElementById(`rider-select-${orderId}`);
+    const deliveryBoyId = riderSelect.value;
+    if (!deliveryBoyId) {
+      alert('Please select a rider first.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/v1/admin/orders/${orderId}/assign`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deliveryBoyId })
+      });
+      const json = await res.json();
+      if (json.success) {
+        alert('Rider assigned and order dispatched successfully!');
+        window.location.reload();
+      } else {
+        alert(json.message || 'Failed to assign rider.');
+      }
+    } catch (err) {
+      alert('Server error.');
+    }
+  }
+</script>
+
+<%- include('partials/admin-footer') %>

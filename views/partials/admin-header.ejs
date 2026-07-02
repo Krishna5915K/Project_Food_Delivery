@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Admin Portal</title>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="sidebar">
+    <h2>FoodClone <span>Admin</span></h2>
+    
+    <div class="sidebar-nav">
+      <a href="/admin/dashboard" class="sidebar-link <%= title === 'Admin Dashboard' ? 'active' : '' %>">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </a>
+      <a href="/admin/users" class="sidebar-link <%= title === 'Manage Users' ? 'active' : '' %>">
+        <i class="fa-solid fa-users"></i> Users List
+      </a>
+      <a href="/admin/restaurants" class="sidebar-link <%= title === 'Manage Restaurants' ? 'active' : '' %>">
+        <i class="fa-solid fa-store"></i> Restaurants
+      </a>
+      <a href="/admin/categories" class="sidebar-link <%= title === 'Manage Categories' ? 'active' : '' %>">
+        <i class="fa-solid fa-folder-open"></i> Categories
+      </a>
+      <a href="/admin/foods" class="sidebar-link <%= title === 'Manage Foods' ? 'active' : '' %>">
+        <i class="fa-solid fa-bowl-food"></i> Food Catalog
+      </a>
+      <a href="/admin/orders" class="sidebar-link <%= title === 'Manage Orders' ? 'active' : '' %>">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Orders Registry
+      </a>
+      <a href="/admin/payments" class="sidebar-link <%= title === 'Manage Payments' ? 'active' : '' %>">
+        <i class="fa-solid fa-credit-card"></i> Payments
+      </a>
+      <a href="/admin/reports" class="sidebar-link <%= title === 'Sales & System Reports' ? 'active' : '' %>">
+        <i class="fa-solid fa-chart-line"></i> Sales Reports
+      </a>
+    </div>
+
+    <div style="margin-top:auto;">
+      <a href="/logout" class="sidebar-link" style="color:var(--danger-color);">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </a>
+    </div>
+  </div>
+
+  <div class="admin-main">
+    <div class="admin-header">
+      <h1><%= title %></h1>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <i class="fa-solid fa-circle-user" style="font-size:1.5rem; color:var(--accent-color);"></i>
+        <strong style="font-size:0.95rem;"><%= user.name %></strong>
+      </div>
+    </div>

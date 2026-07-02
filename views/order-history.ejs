@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+
+<div style="margin-bottom: 2.5rem;">
+  <h2 style="font-weight: 800; font-size: 2rem;">Order History</h2>
+  <p class="text-muted">Track your live deliveries or browse past culinary purchases.</p>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:2rem;">
+  <% if (orders && orders.length > 0) { %>
+    <% orders.forEach(order => { %>
+      <div class="glass-card" style="padding:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:1rem; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <strong style="color:white; font-size:1.1rem;">Order #<%= order._id.toString().slice(-8).toUpperCase() %></strong>
+            <p class="text-muted" style="font-size:0.8rem; margin-top:0.25rem;"><%= new Date(order.createdAt).toLocaleDateString() %> at <%= new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %></p>
+          </div>
+          <div>
+            <span class="btn btn-secondary btn-sm" style="text-transform:uppercase; font-size:0.75rem; font-weight:700; pointer-events:none;">
+              Status: <%= order.orderStatus.replace('_', ' ') %>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+          <div>
+            <h4 style="font-weight:700; color:white; margin-bottom:0.5rem;"><%= order.restaurant ? order.restaurant.name : 'Restaurant' %></h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:0.25rem; font-size:0.875rem;" class="text-muted">
+              <% order.items.forEach(item => { %>
+                <% if (item.food) { %>
+                  <li><%= item.food.name %> x <%= item.quantity %></li>
+                <% } %>
+              <% }) %>
+            </ul>
+          </div>
+          
+          <div style="text-align:right;">
+            <span class="text-muted" style="font-size:0.85rem; display:block; margin-bottom:0.25rem;">Total Paid</span>
+            <strong class="price" style="font-size:1.4rem;">₹<%= order.totalAmount %></strong>
+          </div>
+        </div>
+
+        <% if (['placed', 'confirmed', 'preparing', 'out_for_delivery'].includes(order.orderStatus)) { %>
+          <div style="margin-top:1.5rem; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; padding:1rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.9rem;">
+              <i class="fa-solid fa-truck-fast" style="color:var(--accent-color); font-size:1.1rem; animation: pulse 2s infinite;"></i>
+              <span>Your delivery is active. Status: <strong><%= order.orderStatus.toUpperCase().replace('_', ' ') %></strong></span>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="glass-card" style="text-align:center; padding:3rem;">
+      <i class="fa-solid fa-clock-rotate-left" style="font-size:3rem; color:var(--text-secondary); margin-bottom:1rem;"></i>
+      <h3>No Orders Yet</h3>
+      <p class="text-muted" style="margin-top:0.5rem;">You haven't ordered any food yet.</p>
+    </div>
+  <% } %>
+</div>
+
+<style>
+  @keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+  }
+</style>
+
+<%- include('partials/footer') %>

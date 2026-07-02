@@ -1,0 +1,45 @@
+<%- include('partials/delivery-header') %>
+
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-weight: 800; font-size: 1.75rem;">My Profile</h2>
+  <p class="text-muted">Manage your rider details and vehicle registration status.</p>
+</div>
+
+<div class="glass-card" style="display:flex; flex-direction:column; gap:1.5rem;">
+  <div style="display:flex; align-items:center; gap:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:1.5rem;">
+    <div style="width:70px; height:70px; border-radius:50%; background:var(--accent-color); display:flex; justify-content:center; align-items:center; font-size:2rem; font-weight:800; color:white; border:2px solid rgba(255,255,255,0.1);">
+      <%= user.name.charAt(0).toUpperCase() %>
+    </div>
+    <div>
+      <h3 style="font-size:1.25rem; font-weight:800; color:white;"><%= user.name %></h3>
+      <span style="background:rgba(16,185,129,0.15); color:var(--accent-color); padding:0.25rem 0.6rem; border-radius:6px; font-size:0.75rem; border:1px solid rgba(16,185,129,0.3); font-weight:800; text-transform:uppercase;">
+        <i class="fa-solid fa-circle-check"></i> Verified Rider
+      </span>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:1.25rem; font-size:0.95rem;">
+    <div style="display:flex; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <div style="width:140px; color:var(--text-secondary); font-weight:500;">Email Address</div>
+      <div style="color:white; font-weight:600;"><%= user.email %></div>
+    </div>
+    <div style="display:flex; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <div style="width:140px; color:var(--text-secondary); font-weight:500;">Phone Number</div>
+      <div style="color:white; font-weight:600;"><%= user.phone || 'N/A' %></div>
+    </div>
+    <div style="display:flex; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <div style="width:140px; color:var(--text-secondary); font-weight:500;">Vehicle Type</div>
+      <div style="color:white; font-weight:600; text-transform:uppercase;"><%= deliveryBoy ? deliveryBoy.vehicleType : 'BIKE' %></div>
+    </div>
+    <div style="display:flex; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <div style="width:140px; color:var(--text-secondary); font-weight:500;">Vehicle Number</div>
+      <div style="color:white; font-weight:600; text-transform:uppercase;"><%= deliveryBoy ? deliveryBoy.vehicleNumber : 'N/A' %></div>
+    </div>
+    <div style="display:flex; padding-bottom:0.25rem;">
+      <div style="width:140px; color:var(--text-secondary); font-weight:500;">License Number</div>
+      <div style="color:white; font-weight:600; text-transform:uppercase;"><%= deliveryBoy ? deliveryBoy.licenseNumber : 'N/A' %></div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/delivery-footer') %>

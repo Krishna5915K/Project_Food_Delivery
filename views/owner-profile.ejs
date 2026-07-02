@@ -1,0 +1,32 @@
+<%- include('partials/owner-header') %>
+
+<div class="glass-card" style="max-width:550px; margin:0 auto; display:flex; flex-direction:column; gap:1.5rem;">
+  <div style="display:flex; align-items:center; gap:1.5rem;">
+    <i class="fa-solid fa-circle-user" style="font-size:4.5rem; color:var(--accent-color);"></i>
+    <div>
+      <h3 style="font-size:1.4rem; font-weight:800; color:white;"><%= user.name %></h3>
+      <p class="text-muted" style="text-transform:uppercase; font-size:0.75rem; font-weight:700;"><i class="fa-solid fa-store" style="color:var(--accent-color);"></i> Restaurant Partner Partner</p>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:1rem; border-top:1px solid var(--border-color); padding-top:1.5rem;">
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <span class="text-muted">Associated Email</span>
+      <strong style="color:white;"><%= user.email %></strong>
+    </div>
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <span class="text-muted">Contact Phone</span>
+      <strong style="color:white;"><%= user.phone || 'N/A' %></strong>
+    </div>
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem;">
+      <span class="text-muted">Account Status</span>
+      <span class="badge badge-success"><%= user.status %></span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding-bottom:0.75rem;">
+      <span class="text-muted">Member Since</span>
+      <strong style="color:white;"><%= new Date(user.createdAt).toLocaleDateString() %></strong>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/owner-footer') %>

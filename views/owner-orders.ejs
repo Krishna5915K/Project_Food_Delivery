@@ -1,0 +1,133 @@
+<%- include('partials/owner-header') %>
+
+<div style="margin-bottom: 2rem;">
+  <p class="text-muted">Accept, prepare, and update status logs for customer orders.</p>
+</div>
+
+<div style="display:flex; flex-direction:column; gap:1.5rem;">
+  <% if (orders && orders.length > 0) { %>
+    <% orders.forEach(o => { %>
+      <div class="glass-card" style="padding:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:0.75rem; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <strong style="color:white; font-size:1.1rem;">Order #<%= o._id.toString().slice(-6).toUpperCase() %></strong>
+            <span class="badge badge-info" style="margin-left:0.5rem; text-transform:uppercase;"><%= o.orderStatus.replace('_', ' ') %></span>
+          </div>
+          <div style="font-size:0.85rem; color:var(--text-secondary);">
+            <%= new Date(o.createdAt).toLocaleString() %>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+          <div>
+            <h4 style="color:white; margin-bottom:0.5rem;"><i class="fa-solid fa-burger" style="color:var(--accent-color);"></i> Ordered Items</h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:0.25rem; font-size:0.9rem;" class="text-muted">
+              <% o.items.forEach(item => { %>
+                <% if (item.food) { %>
+                  <li><%= item.food.name %> x <%= item.quantity %></li>
+                <% } %>
+              <% }) %>
+            </ul>
+            <div style="margin-top:1rem;">
+              <span class="text-muted" style="font-size:0.8rem; display:block;">Deliver To:</span>
+              <p style="color:white; font-size:0.875rem;"><%= o.deliveryAddress %></p>
+            </div>
+          </div>
+          
+          <div style="text-align:right; border-left:1px solid var(--border-color); padding-left:1.5rem; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <span class="text-muted" style="font-size:0.8rem;">Amount Earned</span>
+              <h3 class="price" style="font-size:1.5rem;">₹<%= o.totalAmount %></h3>
+            </div>
+            <div>
+              <span class="text-muted" style="font-size:0.8rem; display:block; margin-bottom:0.25rem;">Assigned Rider</span>
+              <strong style="color:white;"><%= o.deliveryBoy ? o.deliveryBoy.name : 'Unassigned' %></strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; border-top:1px solid var(--border-color); padding-top:1rem; justify-content:flex-end;">
+          <% if (o.orderStatus === 'placed') { %>
+            <button class="btn btn-primary btn-sm" style="width:auto;" onclick="updateOrderStatus('<%= o._id %>', 'confirmed')">Accept Order</button>
+            <button class="btn btn-secondary btn-sm" style="width:auto; color:var(--danger-color);" onclick="updateOrderStatus('<%= o._id %>', 'cancelled')">Cancel Order</button>
+          <% } else if (o.orderStatus === 'confirmed') { %>
+            <button class="btn btn-primary btn-sm" style="width:auto;" onclick="updateOrderStatus('<%= o._id %>', 'preparing')">Start Preparing</button>
+          <% } else if (o.orderStatus === 'preparing') { %>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <select id="rider-select-<%= o._id %>" class="form-select" style="padding:0.35rem 0.5rem; width:150px; font-size:0.85rem;">
+                <option value="">Assign Rider</option>
+                <% deliveryBoys.forEach(d => { %>
+                  <option value="<%= d._id %>"><%= d.name %></option>
+                <% }) %>
+              </select>
+              <button class="btn btn-primary btn-sm" style="width:auto;" onclick="assignRider('<%= o._id %>')">Assign & Dispatch</button>
+            </div>
+          <% } else if (o.orderStatus === 'out_for_delivery') { %>
+            <span class="text-muted" style="font-size:0.9rem;"><i class="fa-solid fa-truck-fast"></i> Out for delivery...</span>
+          <% } else { %>
+            <span class="text-muted" style="font-size:0.9rem;">Order Closed</span>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div class="glass-card" style="text-align:center; padding:3rem;">
+      <i class="fa-solid fa-list-check" style="font-size:3rem; color:var(--text-secondary); margin-bottom:1rem;"></i>
+      <h3>No Active Orders</h3>
+      <p class="text-muted">Any incoming orders for your restaurant will appear here.</p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  async function updateOrderStatus(orderId, newStatus) {
+    try {
+      const res = await fetch(`/api/v1/delivery/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const json = await res.json();
+      if (json.success) {
+        window.location.reload();
+      } else {
+        alert('Failed to update status.');
+      }
+    } catch (err) {
+      alert('Error.');
+    }
+  }
+
+  async function assignRider(orderId) {
+    const riderSelect = document.getElementById(`rider-select-${orderId}`);
+    const deliveryBoyId = riderSelect.value;
+    if (!deliveryBoyId) {
+      alert('Please select a rider first.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/v1/admin/orders/${orderId}/assign`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deliveryBoyId })
+      });
+      const json = await res.json();
+      if (json.success) {
+        // Also update order status to out_for_delivery
+        await fetch(`/api/v1/delivery/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'out_for_delivery' })
+        });
+        window.location.reload();
+      } else {
+        alert(json.message || 'Error assigning rider.');
+      }
+    } catch (err) {
+      alert('Server error.');
+    }
+  }
+</script>
+
+<%- include('partials/owner-footer') %>

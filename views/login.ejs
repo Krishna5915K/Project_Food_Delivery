@@ -4,36 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %> - FoodClone</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <main style="display:flex;align-items:center;justify-content:center;height:100vh;padding:1rem;">
-    <div class="glass-card" style="max-width:420px;width:100%;padding:2rem;">
-      <h2 style="margin-bottom:0.5rem;">Sign In</h2>
-      <p class="text-muted" style="margin-bottom:1rem;">Access your account to order food or manage your restaurant.</p>
+  <main>
+    <div class="glass-card">
+      <div style="margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-utensils" style="color:var(--accent-color); font-size:2.5rem; margin-bottom: 0.5rem;"></i>
+        <h2>Sign In</h2>
+        <p class="text-muted">Access your account to order food or manage operations.</p>
+      </div>
 
-      <div id="alert" class="auth-alert-message" style="display:none;margin-bottom:0.75rem;"></div>
+      <div id="alert" class="auth-alert-message"></div>
 
       <form id="login-form">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input id="email" type="email" class="form-input" required>
+          <label for="email">Email Address</label>
+          <input id="email" type="email" class="form-input" placeholder="name@example.com" required>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <div class="password-wrapper">
-            <input id="password" type="password" class="form-input" required>
+          <div class="password-wrapper" style="width: 100%;">
+            <input id="password" type="password" class="form-input" placeholder="••••••••" required>
             <button type="button" class="password-toggle-btn" onclick="togglePassword()"><i class="fa-solid fa-eye"></i></button>
           </div>
         </div>
 
-        <button id="submitBtn" class="btn btn-primary w-100" type="submit">Sign In</button>
+        <button id="submitBtn" class="btn btn-primary" type="submit">Sign In</button>
       </form>
 
-      <div style="margin-top:1rem;display:flex;justify-content:space-between;align-items:center;font-size:0.9rem;">
+      <div class="auth-links">
         <a href="/register">Create an account</a>
-        <a href="/reset-password">Forgot password?</a>
+        <a href="/forgot-password">Forgot password?</a>
+      </div>
+      
+      <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-around; font-size: 0.8rem;">
+        <a href="/admin/login" style="color: #60a5fa; text-decoration: none;"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
+        <a href="/owner/login" style="color: #ffb83d; text-decoration: none;"><i class="fa-solid fa-store"></i> Owner Portal</a>
+        <a href="/delivery/login" style="color: #34d399; text-decoration: none;"><i class="fa-solid fa-motorcycle"></i> Rider Portal</a>
       </div>
     </div>
   </main>
@@ -63,7 +72,15 @@
         });
         const json = await res.json();
         if (json.success) {
-          window.location.href = '/';
+          if (json.role === 'admin') {
+            window.location.href = '/admin/dashboard';
+          } else if (json.role === 'restaurant_owner') {
+            window.location.href = '/owner/dashboard';
+          } else if (json.role === 'delivery_boy') {
+            window.location.href = '/delivery/dashboard';
+          } else {
+            window.location.href = '/';
+          }
         } else {
           alertDiv.className = 'auth-alert-message error';
           alertDiv.innerText = json.message || 'Invalid credentials';

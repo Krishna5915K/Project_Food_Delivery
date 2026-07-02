@@ -1,0 +1,79 @@
+<%- include('partials/header') %>
+
+<div style="margin-bottom: 2.5rem;">
+  <h2 style="font-weight: 800; font-size: 2rem;">My Wishlist</h2>
+  <p class="text-muted">Quickly access and reorder your favorite meals.</p>
+</div>
+
+<div class="grid-3">
+  <% if (foods && foods.length > 0) { %>
+    <% foods.forEach(food => { %>
+      <div class="glass-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <% if (food.image) { %>
+            <img src="<%= food.image %>" class="food-card-img" alt="<%= food.name %>">
+          <% } %>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
+            <h3 style="font-size: 1.15rem; font-weight:700;"><%= food.name %></h3>
+            <% if (food.isVeg) { %>
+              <span style="color:#10b981; font-size:0.75rem;"><i class="fa-solid fa-circle"></i></span>
+            <% } else { %>
+              <span style="color:#ef4444; font-size:0.75rem;"><i class="fa-solid fa-circle"></i></span>
+            <% } %>
+          </div>
+          <p class="text-muted" style="font-size:0.8rem; margin:0.25rem 0 0.75rem;">from <a href="/restaurants/<%= food.restaurant._id %>" style="color:var(--text-secondary);"><%= food.restaurant.name %></a></p>
+          <strong class="price">₹<%= food.price %></strong>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; margin-top:1.25rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+          <button class="btn btn-secondary btn-sm" onclick="toggleWishlist('<%= food._id %>')" style="flex:1;"><i class="fa-solid fa-heart-crack"></i> Remove</button>
+          <button class="btn btn-primary btn-sm" onclick="addToCart('<%= food._id %>')" style="flex:1.5;"><i class="fa-solid fa-cart-plus"></i> Add to Cart</button>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div style="grid-column:1/-1; text-align:center; padding:3rem;" class="glass-card">
+      <i class="fa-solid fa-heart" style="font-size:3rem; color:var(--text-secondary); margin-bottom:1rem; opacity:0.3;"></i>
+      <h3>Your Wishlist is Empty</h3>
+      <p class="text-muted" style="margin-top:0.5rem;">Mark items as favorites while browsing to see them here.</p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  async function toggleWishlist(foodId) {
+    try {
+      const res = await fetch('/api/v1/users/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ foodId })
+      });
+      const json = await res.json();
+      if (json.success) {
+        window.location.reload();
+      }
+    } catch (err) {
+      alert('Error connecting.');
+    }
+  }
+
+  async function addToCart(foodId) {
+    try {
+      const res = await fetch('/api/v1/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ foodId, quantity: 1 })
+      });
+      const json = await res.json();
+      if (json.success) {
+        alert('Food added to cart successfully!');
+      } else {
+        alert(json.message || 'Could not add to cart.');
+      }
+    } catch (err) {
+      alert('Network error.');
+    }
+  }
+</script>
+
+<%- include('partials/footer') %>
