@@ -14,16 +14,26 @@ class DeliveryController {
         try {
             // Find delivery boy details
             const deliveryProfile = await DeliveryBoy.findOne({ user: req.user._id });
+            
+            // Accepted active runs
             const assignedOrders = await Order.find({
                 deliveryBoy: req.user._id,
-                orderStatus: { $in: ['confirmed', 'preparing', 'out_for_delivery'] }
+                deliveryBoyStatus: 'accepted',
+                orderStatus: { $in: ['confirmed', 'preparing', 'picked_up', 'on_the_way'] }
+            }).populate('restaurant');
+
+            // Pending delivery requests
+            const pendingRequests = await Order.find({
+                deliveryBoy: req.user._id,
+                deliveryBoyStatus: 'pending'
             }).populate('restaurant');
 
             res.render('delivery-dashboard', { 
                 title: 'Delivery Dashboard', 
                 user: req.user,
                 deliveryProfile,
-                assignedOrders
+                assignedOrders,
+                pendingRequests
             });
         } catch (error) {
             res.redirect('/login');
@@ -34,7 +44,8 @@ class DeliveryController {
         try {
             const orders = await Order.find({ 
                 deliveryBoy: req.user._id, 
-                orderStatus: { $in: ['confirmed', 'preparing', 'out_for_delivery'] } 
+                deliveryBoyStatus: 'accepted',
+                orderStatus: { $in: ['confirmed', 'preparing', 'picked_up', 'on_the_way'] } 
             }).populate('restaurant');
 
             res.render('delivery-assigned', { title: 'Assigned Orders', user: req.user, orders });
@@ -140,6 +151,8 @@ class DeliveryController {
             order.orderStatus = status;
             if (status === 'delivered') {
                 order.paymentStatus = 'completed'; // auto mark as completed on delivery
+                order.deliveryBoyStatus = 'none';
+                await DeliveryBoy.findOneAndUpdate({ user: req.user._id }, { status: 'online' });
             }
             await order.save();
 
@@ -152,6 +165,64 @@ class DeliveryController {
             });
 
             res.status(200).json({ success: true, message: `Order status updated to ${status}.` });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async acceptOrder(req, res) {
+        try {
+            const { orderId } = req.params;
+            const order = await Order.findById(orderId);
+            if (!order) {
+                return res.status(404).json({ success: false, message: 'Order not found.' });
+            }
+
+            order.deliveryBoyStatus = 'accepted';
+            await order.save();
+
+            // Set Delivery Boy as busy
+            await DeliveryBoy.findOneAndUpdate({ user: req.user._id }, { status: 'busy' });
+
+            // Create history log
+            await OrderHistory.create({
+                order: orderId,
+                status: order.orderStatus,
+                comment: 'Delivery request accepted by rider.',
+                updatedBy: req.user._id
+            });
+
+            res.status(200).json({ success: true, message: 'Delivery request accepted.' });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async rejectOrder(req, res) {
+        try {
+            const { orderId } = req.params;
+            const order = await Order.findById(orderId);
+            if (!order) {
+                return res.status(404).json({ success: false, message: 'Order not found.' });
+            }
+
+            // Rejecting: clear deliveryBoy and status
+            order.deliveryBoy = undefined;
+            order.deliveryBoyStatus = 'none';
+            await order.save();
+
+            // Set Delivery Boy as online
+            await DeliveryBoy.findOneAndUpdate({ user: req.user._id }, { status: 'online' });
+
+            // Create history log
+            await OrderHistory.create({
+                order: orderId,
+                status: order.orderStatus,
+                comment: 'Delivery request rejected by rider.',
+                updatedBy: req.user._id
+            });
+
+            res.status(200).json({ success: true, message: 'Delivery request rejected.' });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
         }

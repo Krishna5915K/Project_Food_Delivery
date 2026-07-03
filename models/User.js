@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
         enum: ['customer', 'restaurant_owner', 'delivery_boy', 'admin'],
         default: 'customer'
     },
+    permissions: {
+        type: [String],
+        default: []
+    },
     isEmailVerified: {
         type: Boolean,
         default: false
@@ -67,8 +71,19 @@ const userSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// Hash password before saving
+// Hash password and initialize permissions before saving
 userSchema.pre('save', async function () {
+    if (this.role === 'restaurant_owner' && (!this.permissions || this.permissions.length === 0)) {
+        this.permissions = [
+            'manage_restaurant',
+            'manage_menu',
+            'manage_orders',
+            'manage_offers',
+            'view_statistics',
+            'monitor_riders'
+        ];
+    }
+
     if (!this.isModified('password')) return;
 
     this.password = await bcrypt.hash(this.password, 12);

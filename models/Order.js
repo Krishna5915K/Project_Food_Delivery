@@ -52,12 +52,17 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ['placed', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'],
+        enum: ['placed', 'confirmed', 'preparing', 'picked_up', 'on_the_way', 'delivered', 'cancelled'],
         default: 'placed'
     },
     deliveryBoy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    deliveryBoyStatus: {
+        type: String,
+        enum: ['pending', 'accepted', 'rejected', 'none'],
+        default: 'none'
     }
 }, { timestamps: true });
 

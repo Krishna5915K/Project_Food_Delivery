@@ -12,7 +12,7 @@
   </div>
 
   <!-- Stats Grid -->
-  <div class="stats-grid">
+  <div class="stats-grid" style="margin-bottom: 2rem;">
     <div class="stat-card">
       <span class="stat-label">Dishes Listed</span>
       <span class="stat-val"><%= stats.foodCount %></span>
@@ -26,6 +26,28 @@
       <span class="stat-val" style="color:var(--success-color);">₹<%= stats.revenue %></span>
     </div>
   </div>
+
+  <% if (platformStats) { %>
+    <h3 style="font-size:1.15rem; font-weight:800; margin: 1.5rem 0 1rem; color: white;"><i class="fa-solid fa-chart-line" style="color:var(--accent-color); margin-right: 0.5rem;"></i> Platform Overview (Read-Only)</h3>
+    <div class="stats-grid" style="margin-bottom: 2rem; grid-template-columns: repeat(4, 1fr);">
+      <div class="stat-card">
+        <span class="stat-label">Registered Customers</span>
+        <span class="stat-val" style="color:#60a5fa;"><%= platformStats.totalCustomers %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Delivery Partners</span>
+        <span class="stat-val" style="color:#34d399;"><%= platformStats.totalRiders %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Restaurants</span>
+        <span class="stat-val" style="color:#ffb83d;"><%= platformStats.totalRestaurants %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Platform Orders</span>
+        <span class="stat-val" style="color:#a78bfa;"><%= platformStats.totalOrders %></span>
+      </div>
+    </div>
+  <% } %>
 
   <!-- Recent Orders Table -->
   <div class="table-card">

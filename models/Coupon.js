@@ -46,7 +46,11 @@ const couponSchema = new mongoose.Schema({
   usersUsed: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User' // The IDs of users who have already used the coupon
-  }]
+  }],
+  restaurant: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Restaurant'
+  }
 }, {timestamps: true});
 
 module.exports = mongoose.model('Coupon', couponSchema);

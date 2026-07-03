@@ -3,6 +3,7 @@ const Category = require('../models/Category');
 const Food = require('../models/Food');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const Coupon = require('../models/Coupon');
 
 class OwnerController {
     // Render Views
@@ -13,13 +14,25 @@ class OwnerController {
     async getDashboard(req, res) {
         try {
             const restaurant = await Restaurant.findOne({ owner: req.user._id });
+            
+            // Read-only Platform Statistics (based on permissions)
+            let platformStats = null;
+            if (req.user.permissions.includes('view_statistics')) {
+                const totalCustomers = await User.countDocuments({ role: 'customer' });
+                const totalRiders = await User.countDocuments({ role: 'delivery_boy' });
+                const totalRestaurants = await Restaurant.countDocuments();
+                const totalOrders = await Order.countDocuments();
+                platformStats = { totalCustomers, totalRiders, totalRestaurants, totalOrders };
+            }
+
             if (!restaurant) {
                 return res.render('owner-dashboard', { 
                     title: 'Owner Dashboard', 
                     user: req.user,
                     restaurant: null,
                     stats: null,
-                    recentOrders: []
+                    recentOrders: [],
+                    platformStats
                 });
             }
 
@@ -38,7 +51,8 @@ class OwnerController {
                 user: req.user,
                 restaurant,
                 stats: { foodCount, orderCount: orders.length, revenue: totalRevenue },
-                recentOrders
+                recentOrders,
+                platformStats
             });
         } catch (error) {
             res.redirect('/login');
@@ -207,6 +221,99 @@ class OwnerController {
             const { id } = req.params;
             await Food.findByIdAndDelete(id);
             res.status(200).json({ success: true, message: 'Menu item deleted successfully.' });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async getRiders(req, res) {
+        try {
+            const restaurant = await Restaurant.findOne({ owner: req.user._id });
+            if (!restaurant) {
+                return res.render('owner-riders', { title: 'Monitor Riders', user: req.user, riders: [], activeRuns: [] });
+            }
+
+            const riders = await User.find({ role: 'delivery_boy' }).sort({ name: 1 });
+            
+            const activeRuns = await Order.find({
+                restaurant: restaurant._id,
+                orderStatus: { $in: ['confirmed', 'preparing', 'picked_up', 'on_the_way'] }
+            }).populate('deliveryBoy', 'name phone').populate('user', 'name');
+
+            res.render('owner-riders', { title: 'Monitor Riders', user: req.user, riders, activeRuns });
+        } catch (error) {
+            res.redirect('/owner/dashboard');
+        }
+    }
+
+    async getOffers(req, res) {
+        try {
+            const restaurant = await Restaurant.findOne({ owner: req.user._id });
+            if (!restaurant) {
+                return res.render('owner-offers', { title: 'Manage Offers', user: req.user, coupons: [] });
+            }
+
+            const coupons = await Coupon.find({ restaurant: restaurant._id }).sort({ createdAt: -1 });
+            res.render('owner-offers', { title: 'Manage Offers', user: req.user, coupons });
+        } catch (error) {
+            res.redirect('/owner/dashboard');
+        }
+    }
+
+    async createOffer(req, res) {
+        try {
+            const restaurant = await Restaurant.findOne({ owner: req.user._id });
+            if (!restaurant) {
+                return res.status(404).json({ success: false, message: 'No restaurant found for this owner.' });
+            }
+
+            const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit } = req.body;
+            
+            const coupon = await Coupon.create({
+                code,
+                discountType,
+                discountValue: parseFloat(discountValue),
+                minOrderValue: parseFloat(minOrderValue) || 0,
+                maxDiscountValue: parseFloat(maxDiscountValue) || 0,
+                expiresAt,
+                isActive: isActive === 'true' || isActive === true,
+                usageLimit: parseInt(usageLimit, 10) || 1,
+                restaurant: restaurant._id
+            });
+
+            res.status(201).json({ success: true, message: 'Offer created successfully.', data: coupon });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async updateOffer(req, res) {
+        try {
+            const { id } = req.params;
+            const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit } = req.body;
+            
+            const coupon = await Coupon.findByIdAndUpdate(id, {
+                code,
+                discountType,
+                discountValue: parseFloat(discountValue),
+                minOrderValue: parseFloat(minOrderValue) || 0,
+                maxDiscountValue: parseFloat(maxDiscountValue) || 0,
+                expiresAt,
+                isActive: isActive === 'true' || isActive === true,
+                usageLimit: parseInt(usageLimit, 10) || 1
+            }, { new: true });
+
+            res.status(200).json({ success: true, message: 'Offer updated successfully.', data: coupon });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async deleteOffer(req, res) {
+        try {
+            const { id } = req.params;
+            await Coupon.findByIdAndDelete(id);
+            res.status(200).json({ success: true, message: 'Offer deleted successfully.' });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
         }

@@ -66,4 +66,37 @@ const restrictTo = (...roles) => {
     };
 };
 
-module.exports = { protect, restrictTo };
+const checkPermission = (permission) => {
+    return (req, res, next) => {
+        if (!req.user) {
+            if (req.originalUrl.startsWith('/api/')) {
+                return res.status(401).json({ success: false, message: 'Not authorized. Please login.' });
+            }
+            return res.redirect('/login');
+        }
+
+        // Admin bypasses all checks
+        if (req.user.role === 'admin') {
+            return next();
+        }
+
+        // Owner check
+        if (req.user.role === 'restaurant_owner' && req.user.permissions && req.user.permissions.includes(permission)) {
+            return next();
+        }
+
+        if (req.originalUrl.startsWith('/api/')) {
+            return res.status(403).json({
+                success: false,
+                message: `Access Denied: You do not have the required permission: ${permission}`
+            });
+        }
+
+        return res.status(403).render('login', {
+            title: 'Access Denied',
+            alert: `You do not have the required permission (${permission.replace('_', ' ')}) to access this section.`
+        });
+    };
+};
+
+module.exports = { protect, restrictTo, checkPermission };

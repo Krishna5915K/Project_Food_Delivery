@@ -16,5 +16,7 @@ router.get('/delivery/profile', protect, restrictTo('delivery_boy'), deliveryCon
 // APIs
 router.post('/api/v1/delivery/location', protect, restrictTo('delivery_boy'), deliveryController.updateLocationAPI);
 router.put('/api/v1/delivery/orders/:orderId/status', protect, restrictTo('delivery_boy', 'restaurant_owner'), deliveryController.updateOrderStatusAPI);
+router.put('/api/v1/delivery/orders/:orderId/accept', protect, restrictTo('delivery_boy'), deliveryController.acceptOrder);
+router.put('/api/v1/delivery/orders/:orderId/reject', protect, restrictTo('delivery_boy'), deliveryController.rejectOrder);
 
 module.exports = router;

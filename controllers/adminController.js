@@ -5,6 +5,8 @@ const Food = require('../models/Food');
 const Order = require('../models/Order');
 const Payment = require('../models/Payment');
 const DeliveryBoy = require('../models/DeliveryBoy');
+const Coupon = require('../models/Coupon');
+const Setting = require('../models/Setting');
 
 class AdminController {
     // Render Views
@@ -129,26 +131,61 @@ class AdminController {
         }
     }
 
+    async getOffers(req, res) {
+        try {
+            const coupons = await Coupon.find().populate('restaurant', 'name').sort({ createdAt: -1 });
+            const restaurants = await Restaurant.find().sort({ name: 1 });
+            res.render('admin-offers', { title: 'Manage Offers', user: req.user, coupons, restaurants });
+        } catch (error) {
+            res.redirect('/admin/dashboard');
+        }
+    }
+
+    async getSettings(req, res) {
+        try {
+            let settings = await Setting.find().sort({ key: 1 });
+            if (settings.length === 0) {
+                const defaults = [
+                    { key: 'site_name', value: 'FoodClone', description: 'Name of the platform' },
+                    { key: 'contact_email', value: 'support@foodclone.com', description: 'Support contact email' },
+                    { key: 'commission_rate', value: '10', description: 'Restaurant order commission percentage (%)' },
+                    { key: 'base_delivery_charge', value: '40', description: 'Flat base delivery pay for rider per run (₹)' }
+                ];
+                await Setting.insertMany(defaults);
+                settings = await Setting.find().sort({ key: 1 });
+            }
+            res.render('admin-settings', { title: 'System Settings', user: req.user, settings });
+        } catch (error) {
+            res.redirect('/admin/dashboard');
+        }
+    }
+
     // API CRUD Endpoints for Admin
 
     // Create staff users (Owner, Delivery Boy, Admin)
     async createUser(req, res) {
         try {
-            const { name, email, phone, password, role } = req.body;
+            const { name, email, phone, password, role, permissions } = req.body;
 
             const existingUser = await User.findOne({ email });
             if (existingUser) {
                 return res.status(400).json({ success: false, message: 'Email already exists.' });
             }
 
-            const newUser = await User.create({
+            const userData = {
                 name,
                 email,
                 phone,
                 password,
                 role,
                 isEmailVerified: true // Pre-verify staff
-            });
+            };
+
+            if (permissions) {
+                userData.permissions = Array.isArray(permissions) ? permissions : [permissions];
+            }
+
+            const newUser = await User.create(userData);
 
             // If delivery boy, create delivery boy specific table record
             if (role === 'delivery_boy') {
@@ -162,6 +199,37 @@ class AdminController {
             }
 
             res.status(201).json({ success: true, message: `${role} created successfully.`, data: newUser });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async updateUser(req, res) {
+        try {
+            const { id } = req.params;
+            const { name, email, phone, role, permissions, status } = req.body;
+            
+            const updates = { name, email, phone, role, status };
+            if (permissions) {
+                updates.permissions = Array.isArray(permissions) ? permissions : [permissions];
+            } else if (role === 'restaurant_owner') {
+                updates.permissions = []; // If empty array / cleared
+            }
+            
+            const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+            
+            if (role === 'delivery_boy') {
+                const { vehicleType, vehicleNumber, licenseNumber } = req.body;
+                if (vehicleType || vehicleNumber || licenseNumber) {
+                    await DeliveryBoy.findOneAndUpdate(
+                        { user: id },
+                        { vehicleType, vehicleNumber, licenseNumber },
+                        { upsert: true, new: true }
+                    );
+                }
+            }
+
+            res.status(200).json({ success: true, message: 'User updated successfully.', data: updatedUser });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
         }
@@ -229,13 +297,90 @@ class AdminController {
             }
 
             order.deliveryBoy = deliveryBoyId;
+            order.deliveryBoyStatus = 'pending';
             order.orderStatus = 'confirmed'; // confirm order when assigning boy
             await order.save();
 
-            // Set Delivery Boy as busy
-            await DeliveryBoy.findOneAndUpdate({ user: deliveryBoyId }, { status: 'busy' });
+            res.status(200).json({ success: true, message: 'Delivery boy assigned successfully. Request sent.' });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
 
-            res.status(200).json({ success: true, message: 'Delivery boy assigned successfully.' });
+    async createOffer(req, res) {
+        try {
+            const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit, restaurant } = req.body;
+            
+            const offerData = {
+                code,
+                discountType,
+                discountValue: parseFloat(discountValue),
+                minOrderValue: parseFloat(minOrderValue) || 0,
+                maxDiscountValue: parseFloat(maxDiscountValue) || 0,
+                expiresAt,
+                isActive: isActive === 'true' || isActive === true,
+                usageLimit: parseInt(usageLimit, 10) || 1
+            };
+            
+            if (restaurant && restaurant.trim() !== '') {
+                offerData.restaurant = restaurant;
+            }
+
+            const coupon = await Coupon.create(offerData);
+            res.status(201).json({ success: true, message: 'Offer created successfully.', data: coupon });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async updateOffer(req, res) {
+        try {
+            const { id } = req.params;
+            const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit, restaurant } = req.body;
+            
+            const offerData = {
+                code,
+                discountType,
+                discountValue: parseFloat(discountValue),
+                minOrderValue: parseFloat(minOrderValue) || 0,
+                maxDiscountValue: parseFloat(maxDiscountValue) || 0,
+                expiresAt,
+                isActive: isActive === 'true' || isActive === true,
+                usageLimit: parseInt(usageLimit, 10) || 1
+            };
+            
+            if (restaurant && restaurant.trim() !== '') {
+                offerData.restaurant = restaurant;
+            } else {
+                offerData.restaurant = undefined;
+            }
+
+            const coupon = await Coupon.findByIdAndUpdate(id, offerData, { new: true });
+            res.status(200).json({ success: true, message: 'Offer updated successfully.', data: coupon });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async deleteOffer(req, res) {
+        try {
+            const { id } = req.params;
+            await Coupon.findByIdAndDelete(id);
+            res.status(200).json({ success: true, message: 'Offer deleted successfully.' });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+
+    async updateSettings(req, res) {
+        try {
+            const { settings } = req.body;
+            if (settings) {
+                for (const [key, value] of Object.entries(settings)) {
+                    await Setting.findOneAndUpdate({ key }, { value }, { upsert: true });
+                }
+            }
+            res.status(200).json({ success: true, message: 'System settings updated successfully.' });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
         }

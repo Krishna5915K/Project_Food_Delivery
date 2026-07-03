@@ -22,9 +22,11 @@
 
         <div style="border-top:1px solid var(--border-color); padding-top:0.75rem; display:flex; gap:0.5rem; margin-top:0.5rem;">
           <% if (o.orderStatus === 'confirmed' || o.orderStatus === 'preparing') { %>
-            <button class="btn btn-primary" onclick="updateStatus('<%= o._id %>', 'out_for_delivery')">Mark Out For Delivery</button>
-          <% } else if (o.orderStatus === 'out_for_delivery') { %>
-            <button class="btn btn-primary" style="background-color:#10b981;" onclick="updateStatus('<%= o._id %>', 'delivered')">Mark Delivered</button>
+            <button class="btn btn-primary" onclick="updateStatus('<%= o._id %>', 'picked_up')"><i class="fa-solid fa-box"></i> Mark Picked Up</button>
+          <% } else if (o.orderStatus === 'picked_up') { %>
+            <button class="btn btn-primary" style="background-color:#3b82f6;" onclick="updateStatus('<%= o._id %>', 'on_the_way')"><i class="fa-solid fa-road"></i> Mark On The Way</button>
+          <% } else if (o.orderStatus === 'on_the_way') { %>
+            <button class="btn btn-primary" style="background-color:#10b981;" onclick="updateStatus('<%= o._id %>', 'delivered')"><i class="fa-solid fa-check"></i> Mark Delivered</button>
           <% } %>
         </div>
       </div>
