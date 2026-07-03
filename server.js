@@ -14,7 +14,7 @@ const autoSeed = async () => {
     try {
         const foodCount = await Food.countDocuments();
         const restaurantCount = await Restaurant.countDocuments();
-        const hasOldPlatform = await Restaurant.exists({ platform: 'FoodClone' });
+        const hasOldPlatform = await Restaurant.exists({ platform: 'Food-Delivery' });
         if (foodCount < 50 || restaurantCount === 0 || hasOldPlatform) {
             logger.info('Database has insufficient or outdated data. Automatically seeding 160 Swiggy & Zomato items...');
             await seedData(false);
