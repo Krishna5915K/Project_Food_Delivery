@@ -129,7 +129,7 @@ class DeliveryController {
             await DeliveryLiveLocation.findOneAndUpdate(
                 { deliveryBoy: req.user._id },
                 { location: { type: 'Point', coordinates } },
-                { upsert: true, new: true }
+                { upsert: true, returnDocument: 'after' }
             );
 
             res.status(200).json({ success: true, message: 'Location updated successfully.' });

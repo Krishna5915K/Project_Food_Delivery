@@ -48,7 +48,7 @@ class UserController {
                 updates.profileImage = `/uploads/${req.file.filename}`;
             }
 
-            const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, { new: true });
+            const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, { returnDocument: 'after' });
 
             res.status(200).json({
                 success: true,

@@ -22,7 +22,7 @@ class NotificationController {
             const notification = await Notification.findOneAndUpdate(
                 { _id: id, user: req.user._id },
                 { isRead: true },
-                { new: true }
+                { returnDocument: 'after' }
             );
 
             if (!notification) {

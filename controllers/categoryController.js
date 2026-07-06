@@ -23,7 +23,7 @@ class CategoryController {
     async updateCategory(req, res) {
         try {
             const { id } = req.params;
-            const category = await Category.findByIdAndUpdate(id, req.body, { new: true });
+            const category = await Category.findByIdAndUpdate(id, req.body, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'Category updated.', data: category });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });

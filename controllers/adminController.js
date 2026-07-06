@@ -216,7 +216,7 @@ class AdminController {
                 updates.permissions = []; // If empty array / cleared
             }
             
-            const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+            const updatedUser = await User.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
             
             if (role === 'delivery_boy') {
                 const { vehicleType, vehicleNumber, licenseNumber } = req.body;
@@ -224,7 +224,7 @@ class AdminController {
                     await DeliveryBoy.findOneAndUpdate(
                         { user: id },
                         { vehicleType, vehicleNumber, licenseNumber },
-                        { upsert: true, new: true }
+                        { upsert: true, returnDocument: 'after' }
                     );
                 }
             }
@@ -239,7 +239,7 @@ class AdminController {
         try {
             const { id } = req.params;
             const { status } = req.body;
-            const updated = await User.findByIdAndUpdate(id, { status }, { new: true });
+            const updated = await User.findByIdAndUpdate(id, { status }, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'User status updated.', data: updated });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
@@ -279,7 +279,7 @@ class AdminController {
             const { id } = req.params;
             const { isApproved } = req.body;
             
-            const restaurant = await Restaurant.findByIdAndUpdate(id, { isApproved }, { new: true });
+            const restaurant = await Restaurant.findByIdAndUpdate(id, { isApproved }, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'Restaurant status updated.', data: restaurant });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
@@ -355,7 +355,7 @@ class AdminController {
                 offerData.restaurant = undefined;
             }
 
-            const coupon = await Coupon.findByIdAndUpdate(id, offerData, { new: true });
+            const coupon = await Coupon.findByIdAndUpdate(id, offerData, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'Offer updated successfully.', data: coupon });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });

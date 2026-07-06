@@ -156,7 +156,7 @@ class OwnerController {
                 updates.banner = `/uploads/${req.files.banner[0].filename}`;
             }
 
-            const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurant._id, updates, { new: true });
+            const updatedRestaurant = await Restaurant.findByIdAndUpdate(restaurant._id, updates, { returnDocument: 'after' });
 
             res.status(200).json({ success: true, message: 'Restaurant updated successfully.', data: updatedRestaurant });
         } catch (error) {
@@ -209,7 +209,7 @@ class OwnerController {
                 updates.image = `/uploads/${req.file.filename}`;
             }
 
-            const food = await Food.findByIdAndUpdate(id, updates, { new: true });
+            const food = await Food.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'Menu item updated successfully.', data: food });
         } catch (error) {
             res.status(400).json({ success: false, message: error.message });
@@ -301,7 +301,7 @@ class OwnerController {
                 expiresAt,
                 isActive: isActive === 'true' || isActive === true,
                 usageLimit: parseInt(usageLimit, 10) || 1
-            }, { new: true });
+            }, { returnDocument: 'after' });
 
             res.status(200).json({ success: true, message: 'Offer updated successfully.', data: coupon });
         } catch (error) {
