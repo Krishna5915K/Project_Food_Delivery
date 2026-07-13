@@ -12,7 +12,24 @@ const upload = require('../utils/imageUpload');
 const router = express.Router();
 
 // ----------------- Customer Page Views (Protected) -----------------
-router.get('/', protect, restaurantController.getHome);
+// Root route — show landing for guests, home for logged-in customers
+router.get('/', (req, res, next) => {
+    const jwt = require('jsonwebtoken');
+    const User = require('../models/User');
+    const token = req.cookies.token;
+    if (!token) return res.render('landing', { title: 'Welcome' });
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'RestaurantSecretKey123!');
+        User.findById(decoded.id).then(user => {
+            if (!user) return res.render('landing', { title: 'Welcome' });
+            req.user = user;
+            res.locals.user = user;
+            next();
+        }).catch(() => res.render('landing', { title: 'Welcome' }));
+    } catch (e) {
+        return res.render('landing', { title: 'Welcome' });
+    }
+}, restaurantController.getHome);
 router.get('/restaurants', protect, restaurantController.getRestaurants);
 router.get('/restaurants/:id', protect, restaurantController.getRestaurantDetails);
 router.get('/foods/:id', protect, foodController.getFoodDetails);
