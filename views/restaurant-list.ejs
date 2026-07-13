@@ -1,221 +1,244 @@
 <%- include('partials/header') %>
 
-<%
-  // Pre-calculate view buttons classes
-  const restaurantsBtnClass = view === 'restaurants' ? 'btn-primary' : 'btn-secondary';
-  const dishesBtnClass = view === 'dishes' ? 'btn-primary' : 'btn-secondary';
-%>
+  <% // Pre-calculate view buttons classes const restaurantsBtnClass=view==='restaurants' ? 'btn-primary'
+    : 'btn-secondary' ; const dishesBtnClass=view==='dishes' ? 'btn-primary' : 'btn-secondary' ; %>
 
-<div style="margin-bottom: 2rem; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
-  <div>
-    <h2 style="font-weight: 800; font-size: 2rem;"><%= view === 'restaurants' ? 'Explore Partner Kitchens' : 'Explore Direct Dishes' %></h2>
-    <p class="text-muted">Browse through verified partner kitchens and delicious food catalogs.</p>
-  </div>
-  
-  <div style="display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.02); padding: 0.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
-    <button type="button" class="btn <%= restaurantsBtnClass %>" onclick="switchView('restaurants')" style="padding: 0.5rem 1rem; border-radius: 10px; border:none; font-size:0.85rem; cursor:pointer;">
-      <i class="fa-solid fa-store" style="margin-right: 0.4rem;"></i> Kitchens
-    </button>
-    <button type="button" class="btn <%= dishesBtnClass %>" onclick="switchView('dishes')" style="padding: 0.5rem 1rem; border-radius: 10px; border:none; font-size:0.85rem; cursor:pointer;">
-      <i class="fa-solid fa-bowl-food" style="margin-right: 0.4rem;"></i> Dishes
-    </button>
-  </div>
-</div>
-
-<!-- Filters & Search -->
-<div class="glass-card" style="margin-bottom: 2.5rem; padding: 1.5rem;">
-  <form action="/restaurants" method="GET" style="display:flex; flex-direction:column; gap:1.25rem;">
-    <input type="hidden" name="view" value="<%= view %>">
-    
-    <div style="display:flex; gap:1rem; flex-wrap:wrap; width:100%;">
-      <div style="flex:1; min-width:250px; position:relative;">
-        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);"></i>
-        <input name="search" type="text" class="form-input" style="padding-left:2.5rem;" placeholder="<%= view === 'restaurants' ? 'Search by kitchen name...' : 'Search by dish name...' %>" value="<%= search %>">
-      </div>
-      
-      <div style="width:200px;">
-        <select name="cuisine" class="form-input" onchange="this.form.submit()">
-          <option value="">All Cuisines</option>
-          <% cuisines.forEach(c => { %>
-            <option value="<%= c %>" <%= selectedCuisine === c ? 'selected' : '' %>><%= c %></option>
-          <% }) %>
-        </select>
+    <div
+      style="margin-bottom: 2rem; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <h2 style="font-weight: 800; font-size: 2rem;">
+          <%= view==='restaurants' ? 'Explore Partner Kitchens' : 'Explore Direct Dishes' %>
+        </h2>
+        <p class="text-muted">Browse through verified partner kitchens and delicious food catalogs.</p>
       </div>
 
-      <div style="width:200px;">
-        <select name="platform" class="form-input" onchange="this.form.submit()">
-          <option value="">All Platforms</option>
-          <option value="Swiggy" <%= selectedPlatform === 'Swiggy' ? 'selected' : '' %>>Swiggy Only</option>
-          <option value="Zomato" <%= selectedPlatform === 'Zomato' ? 'selected' : '' %>>Zomato Only</option>
-        </select>
+      <div
+        style="display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.02); padding: 0.25rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <button type="button" class="btn <%= restaurantsBtnClass %>" onclick="switchView('restaurants')"
+          style="padding: 0.5rem 1rem; border-radius: 10px; border:none; font-size:0.85rem; cursor:pointer;">
+          <i class="fa-solid fa-store" style="margin-right: 0.4rem;"></i> Kitchens
+        </button>
+        <button type="button" class="btn <%= dishesBtnClass %>" onclick="switchView('dishes')"
+          style="padding: 0.5rem 1rem; border-radius: 10px; border:none; font-size:0.85rem; cursor:pointer;">
+          <i class="fa-solid fa-bowl-food" style="margin-right: 0.4rem;"></i> Dishes
+        </button>
       </div>
-
-      <button type="submit" class="btn btn-primary" style="width:auto;">Apply Filters</button>
     </div>
-  </form>
-</div>
 
-<!-- Category Tabs Bar -->
-<div class="category-filters" style="margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem; justify-content: flex-start; gap: 0.75rem; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
-  <a href="/restaurants?view=<%= view %>&platform=<%= selectedPlatform %>&search=<%= search %>" class="category-chip <%= !selectedCuisine ? 'active' : '' %>" style="text-decoration: none; white-space: nowrap;">
-    🌐 All Categories
-  </a>
-  <%
-    const categoryEmojis = {
-      'Italian': '🇮🇹 Italian',
-      'Chinese': '🥢 Chinese',
-      'Indian': '🍛 Indian',
-      'Fast Food': '🍟 Fast Food',
-      'Desserts': '🧁 Desserts',
-      'Beverages': '🥤 Beverages',
-      'Pizza': '🍕 Pizza',
-      'Burgers': '🍔 Burgers'
-    };
-  %>
-  <% cuisines.forEach(c => { %>
-    <% const displayName = categoryEmojis[c] || c; %>
-    <a href="/restaurants?cuisine=<%= c %>&view=<%= view %>&platform=<%= selectedPlatform %>&search=<%= search %>" class="category-chip <%= selectedCuisine === c ? 'active' : '' %>" style="text-decoration: none; white-space: nowrap;">
-      <%= displayName %>
-    </a>
-  <% }) %>
-</div>
+    <!-- Filters & Search -->
+    <div class="glass-card" style="margin-bottom: 2.5rem; padding: 1.5rem;">
+      <form action="/restaurants" method="GET" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <input type="hidden" name="view" value="<%= view %>">
 
-<!-- Main Display Grid -->
-<% if (view === 'restaurants') { %>
-  <div class="grid-3">
-    <% if (restaurants && restaurants.length > 0) { %>
-      <% restaurants.forEach(res => { %>
-        <%
-          // Determine restaurant platform background color
-          let resPlatformBg = 'var(--accent-color)';
-          if (res.platform === 'Swiggy') {
-            resPlatformBg = '#fc8019';
-          } else if (res.platform === 'Zomato') {
-            resPlatformBg = '#cb202d';
-          }
-        %>
-        <div class="glass-card" onclick="window.location.href='/restaurants/<%= res._id %>'" style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height: 100%;">
-          <div>
-            <div style="position: relative;">
-              <img src="<%= res.logo || 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500' %>" class="food-card-img" alt="<%= res.name %>" style="height: 180px; object-fit: cover; border-radius: 12px; width: 100%;">
-              <span class="badge" style="position: absolute; top: 0.75rem; right: 0.75rem; background: <%= resPlatformBg %>; color: white; padding: 0.3rem 0.6rem; font-weight: 800; border-radius: 8px; font-size: 0.7rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border:none;">
-                <%= res.platform %>
-              </span>
-            </div>
-            
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.75rem;">
-              <h3 style="font-size: 1.15rem; font-weight:700;"><%= res.name %></h3>
-              <span style="color:#ffa502; font-weight:700;"><i class="fa-solid fa-star"></i> <%= res.averageRating || '0.0' %></span>
-            </div>
-            <p class="text-muted" style="font-size: 0.8rem; margin: 0.25rem 0 0.75rem;"><%= res.address %></p>
-            
-            <div style="margin-bottom:0.75rem;">
-              <% if (res.cuisineType) { %>
-                <% res.cuisineType.forEach(c => { %>
-                  <span class="cuisine-tag"><%= c %></span>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; width:100%;">
+          <div style="flex:1; min-width:250px; position:relative;">
+            <i class="fa-solid fa-magnifying-glass"
+              style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);"></i>
+            <input name="search" type="text" class="form-input" style="padding-left:2.5rem;"
+              placeholder="<%= view === 'restaurants' ? 'Search by kitchen name...' : 'Search by dish name...' %>"
+              value="<%= search %>">
+          </div>
+
+          <div style="width:200px;">
+            <select name="cuisine" class="form-input" onchange="this.form.submit()">
+              <option value="">All Cuisines</option>
+              <% cuisines.forEach(c=> { %>
+                <option value="<%= c %>" <%=selectedCuisine===c ? 'selected' : '' %>><%= c %>
+                </option>
                 <% }) %>
-              <% } %>
-            </div>
+            </select>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; font-size: 0.85rem; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top: 0.5rem;">
-            <span><i class="fa-solid fa-clock"></i> <%= res.deliveryTimeMinutes %> mins</span>
-            <span>Min. order: ₹<%= res.minOrderAmount %></span>
+          <div style="width:200px;">
+            <select name="platform" class="form-input" onchange="this.form.submit()">
+              <option value="">All Platforms</option>
+              <option value="Swiggy" <%=selectedPlatform==='Swiggy' ? 'selected' : '' %>>Swiggy Only</option>
+              <option value="Zomato" <%=selectedPlatform==='Zomato' ? 'selected' : '' %>>Zomato Only</option>
+            </select>
           </div>
+
+          <button type="submit" class="btn btn-primary" style="width:auto;">Apply Filters</button>
         </div>
-      <% }) %>
-    <% } else { %>
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-        <i class="fa-solid fa-store-slash" style="font-size: 3rem; color:var(--text-secondary); margin-bottom: 1rem;"></i>
-        <h3>No Kitchens Found</h3>
-        <p class="text-muted" style="margin-top:0.5rem;">Try adjusting your search criteria or platforms filter.</p>
+      </form>
+    </div>
+
+    <!-- Category Tabs Bar -->
+    <div class="category-filters"
+      style="margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem; justify-content: flex-start; gap: 0.75rem; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;">
+      <a href="/restaurants?view=<%= view %>&platform=<%= selectedPlatform %>&search=<%= search %>"
+        class="category-chip <%= !selectedCuisine ? 'active' : '' %>"
+        style="text-decoration: none; white-space: nowrap;">
+        🌐 All Categories
+      </a>
+      <% const categoryEmojis={ 'Italian' : '🇮🇹 Italian' , 'Chinese' : '🥢 Chinese' , 'Indian' : '🍛 Indian'
+        , 'Fast Food' : '🍟 Fast Food' , 'Desserts' : '🧁 Desserts' , 'Beverages' : '🥤 Beverages' , 'Pizza'
+        : '🍕 Pizza' , 'Burgers' : '🍔 Burgers' }; %>
+        <% cuisines.forEach(c=> { %>
+          <% const displayName=categoryEmojis[c] || c; %>
+            <a href="/restaurants?cuisine=<%= c %>&view=<%= view %>&platform=<%= selectedPlatform %>&search=<%= search %>"
+              class="category-chip <%= selectedCuisine === c ? 'active' : '' %>"
+              style="text-decoration: none; white-space: nowrap;">
+              <%= displayName %>
+            </a>
+            <% }) %>
+    </div>
+
+    <!-- Main Display Grid -->
+    <% if (view==='restaurants' ) { %>
+      <div class="grid-3">
+        <% if (restaurants && restaurants.length> 0) { %>
+          <% restaurants.forEach(res=> { %>
+            <% // Determine restaurant platform background color let resPlatformBg='var(--accent-color)' ; if
+              (res.platform==='Swiggy' ) { resPlatformBg='#fc8019' ; } else if (res.platform==='Zomato' ) {
+              resPlatformBg='#cb202d' ; } %>
+              <div class="glass-card" onclick="window.location.href='/restaurants/<%= res._id %>'"
+                style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height: 100%;">
+                <div>
+                  <div style="position: relative;">
+                    <img src="<%= res.logo || 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=500' %>"
+                      class="food-card-img" alt="<%= res.name %>"
+                      style="height: 180px; object-fit: cover; border-radius: 12px; width: 100%;">
+                    <span class="badge"
+                      style="position: absolute; top: 0.75rem; right: 0.75rem; background: <%= resPlatformBg %>; color: white; padding: 0.3rem 0.6rem; font-weight: 800; border-radius: 8px; font-size: 0.7rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border:none;">
+                      <%= res.platform %>
+                    </span>
+                  </div>
+
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.75rem;">
+                    <h3 style="font-size: 1.15rem; font-weight:700;">
+                      <%= res.name %>
+                    </h3>
+                    <span style="color:#ffa502; font-weight:700;"><i class="fa-solid fa-star"></i>
+                      <%= res.averageRating || '0.0' %>
+                    </span>
+                  </div>
+                  <p class="text-muted" style="font-size: 0.8rem; margin: 0.25rem 0 0.75rem;">
+                    <%= res.address %>
+                  </p>
+
+                  <div style="margin-bottom:0.75rem;">
+                    <% if (res.cuisineType) { %>
+                      <% res.cuisineType.forEach(c=> { %>
+                        <span class="cuisine-tag">
+                          <%= c %>
+                        </span>
+                        <% }) %>
+                          <% } %>
+                  </div>
+                </div>
+
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; font-size: 0.85rem; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top: 0.5rem;">
+                  <span><i class="fa-solid fa-clock"></i>
+                    <%= res.deliveryTimeMinutes %> mins
+                  </span>
+                  <span>Min. order: ₹<%= res.minOrderAmount %></span>
+                </div>
+              </div>
+              <% }) %>
+                <% } else { %>
+                  <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <i class="fa-solid fa-store-slash"
+                      style="font-size: 3rem; color:var(--text-secondary); margin-bottom: 1rem;"></i>
+                    <h3>No Kitchens Found</h3>
+                    <p class="text-muted" style="margin-top:0.5rem;">Try adjusting your search criteria or platforms
+                      filter.</p>
+                  </div>
+                  <% } %>
       </div>
-    <% } %>
-  </div>
-<% } else { %>
-  <div class="grid-3">
-    <% if (foods && foods.length > 0) { %>
-      <% foods.forEach(food => { %>
-        <%
-          // Determine food restaurant platform background color
-          let foodPlatform = 'FoodClone';
-          let foodPlatformBg = 'var(--accent-color)';
-          if (food.restaurant) {
-            foodPlatform = food.restaurant.platform;
-            if (foodPlatform === 'Swiggy') {
-              foodPlatformBg = '#fc8019';
-            } else if (foodPlatform === 'Zomato') {
-              foodPlatformBg = '#cb202d';
+      <% } else { %>
+        <div class="grid-3">
+          <% if (foods && foods.length> 0) { %>
+            <% foods.forEach(food=> { %>
+              <% // Determine food restaurant platform background color let foodPlatform='Food Platform' ; let
+                foodPlatformBg='var(--accent-color)' ; if (food.restaurant) { foodPlatform=food.restaurant.platform; if
+                (foodPlatform==='Swiggy' ) { foodPlatformBg='#fc8019' ; } else if (foodPlatform==='Zomato' ) {
+                foodPlatformBg='#cb202d' ; } } %>
+                <div class="glass-card"
+                  style="display:flex; flex-direction:column; gap:0.75rem; justify-content:space-between; height: 100%;">
+                  <div>
+                    <div style="position: relative;">
+                      <img src="<%= food.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' %>"
+                        class="food-card-img" alt="<%= food.name %>"
+                        style="height: 180px; object-fit: cover; border-radius: 12px; width: 100%;">
+                      <span class="badge"
+                        style="position: absolute; top: 0.75rem; right: 0.75rem; background: <%= foodPlatformBg %>; color: white; padding: 0.3rem 0.6rem; font-weight: 800; border-radius: 8px; font-size: 0.7rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border:none;">
+                        <%= foodPlatform %>
+                      </span>
+                    </div>
+
+                    <div
+                      style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
+                      <h3 style="font-size: 1.15rem; font-weight:700;">
+                        <%= food.name %>
+                      </h3>
+                      <% if (food.isVeg) { %>
+                        <span style="color:#10b981; font-size:1.1rem;" title="Veg"><i
+                            class="fa-solid fa-leaf"></i></span>
+                        <% } else { %>
+                          <span style="color:#ef4444; font-size:1.1rem;" title="Non-Veg"><i
+                              class="fa-solid fa-circle"></i></span>
+                          <% } %>
+                    </div>
+
+                    <p class="text-muted" style="font-size: 0.8rem; margin: 0.25rem 0 0.5rem;">
+                      <%= food.description || 'No description available.' %>
+                    </p>
+
+                    <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">
+                      Kitchen: <a href="/restaurants/<%= food.restaurant._id %>"
+                        style="color:var(--accent-color); font-weight:600; text-decoration:none;">
+                        <%= food.restaurant.name %>
+                      </a>
+                    </span>
+                  </div>
+
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top:0.5rem;">
+                    <strong class="price" style="font-size:1.2rem; color:white;">₹<%= food.price %></strong>
+                    <button class="btn btn-primary btn-sm" onclick="addToCart('<%= food._id %>')"
+                      style="width:auto; padding:0.4rem 0.8rem; border-radius:8px;">
+                      <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                    </button>
+                  </div>
+                </div>
+                <% }) %>
+                  <% } else { %>
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                      <i class="fa-solid fa-bowl-food"
+                        style="font-size: 3rem; color:var(--text-secondary); margin-bottom: 1rem;"></i>
+                      <h3>No Dishes Found</h3>
+                      <p class="text-muted" style="margin-top:0.5rem;">Try adjusting your categories or platform filter
+                        options.</p>
+                    </div>
+                    <% } %>
+        </div>
+        <% } %>
+
+          <script>
+            function switchView(newView) {
+              const url = new URL(window.location.href);
+              url.searchParams.set('view', newView);
+              window.location.href = url.toString();
             }
-          }
-        %>
-        <div class="glass-card" style="display:flex; flex-direction:column; gap:0.75rem; justify-content:space-between; height: 100%;">
-          <div>
-            <div style="position: relative;">
-              <img src="<%= food.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' %>" class="food-card-img" alt="<%= food.name %>" style="height: 180px; object-fit: cover; border-radius: 12px; width: 100%;">
-              <span class="badge" style="position: absolute; top: 0.75rem; right: 0.75rem; background: <%= foodPlatformBg %>; color: white; padding: 0.3rem 0.6rem; font-weight: 800; border-radius: 8px; font-size: 0.7rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border:none;">
-                <%= foodPlatform %>
-              </span>
-            </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.5rem;">
-              <h3 style="font-size: 1.15rem; font-weight:700;"><%= food.name %></h3>
-              <% if (food.isVeg) { %>
-                <span style="color:#10b981; font-size:1.1rem;" title="Veg"><i class="fa-solid fa-leaf"></i></span>
-              <% } else { %>
-                <span style="color:#ef4444; font-size:1.1rem;" title="Non-Veg"><i class="fa-solid fa-circle"></i></span>
-              <% } %>
-            </div>
-            
-            <p class="text-muted" style="font-size: 0.8rem; margin: 0.25rem 0 0.5rem;"><%= food.description || 'No description available.' %></p>
-            
-            <span style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">
-              Kitchen: <a href="/restaurants/<%= food.restaurant._id %>" style="color:var(--accent-color); font-weight:600; text-decoration:none;"><%= food.restaurant.name %></a>
-            </span>
-          </div>
-          
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:0.75rem; margin-top:0.5rem;">
-            <strong class="price" style="font-size:1.2rem; color:white;">₹<%= food.price %></strong>
-            <button class="btn btn-primary btn-sm" onclick="addToCart('<%= food._id %>')" style="width:auto; padding:0.4rem 0.8rem; border-radius:8px;">
-              <i class="fa-solid fa-cart-plus"></i> Add to Cart
-            </button>
-          </div>
-        </div>
-      <% }) %>
-    <% } else { %>
-      <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-        <i class="fa-solid fa-bowl-food" style="font-size: 3rem; color:var(--text-secondary); margin-bottom: 1rem;"></i>
-        <h3>No Dishes Found</h3>
-        <p class="text-muted" style="margin-top:0.5rem;">Try adjusting your categories or platform filter options.</p>
-      </div>
-    <% } %>
-  </div>
-<% } %>
+            async function addToCart(foodId) {
+              try {
+                const res = await fetch('/api/v1/cart', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ foodId, quantity: 1 })
+                });
+                const json = await res.json();
+                if (json.success) {
+                  alert('Food added to cart successfully!');
+                } else {
+                  alert(json.message || 'Could not add to cart.');
+                }
+              } catch (err) {
+                alert('Error connecting to server. Try again.');
+              }
+            }
+          </script>
 
-<script>
-  function switchView(newView) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('view', newView);
-    window.location.href = url.toString();
-  }
-
-  async function addToCart(foodId) {
-    try {
-      const res = await fetch('/api/v1/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ foodId, quantity: 1 })
-      });
-      const json = await res.json();
-      if (json.success) {
-        alert('Food added to cart successfully!');
-      } else {
-        alert(json.message || 'Could not add to cart.');
-      }
-    } catch (err) {
-      alert('Error connecting to server. Try again.');
-    }
-  }
-</script>
-
-<%- include('partials/footer') %>
+          <%- include('partials/footer') %>

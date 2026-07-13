@@ -15,11 +15,11 @@ const seedData = async (shouldExit = true) => {
 
         // 1. Create/Retrieve Partner Owner User
         console.log('Checking for Restaurant Owner user...');
-        let owner = await User.findOne({ email: 'owner@foodclone.com' });
+        let owner = await User.findOne({ email: 'owner@Food Platform.com' });
         if (!owner) {
             owner = await User.create({
                 name: 'Partner Owner',
-                email: 'owner@foodclone.com',
+                email: 'owner@Food Platform.com',
                 password: 'Password123',
                 phone: '+919999999999',
                 role: 'restaurant_owner',
@@ -37,7 +37,7 @@ const seedData = async (shouldExit = true) => {
         await Category.deleteMany({});
         await Restaurant.deleteMany({});
 
-        // 3. Create Restaurants (Platform Swiggy, Zomato, FoodClone, both)
+        // 3. Create Restaurants (Platform Swiggy, Zomato, Food Platform, both)
         console.log('Seeding restaurants...');
         const restaurantsData = [
             {
@@ -151,7 +151,7 @@ const seedData = async (shouldExit = true) => {
         console.log('Seeding global categories...');
         const categoriesMap = {};
         const categoriesList = ['Italian', 'Chinese', 'Indian', 'Fast Food', 'Desserts', 'Beverages', 'Pizza', 'Burgers'];
-        
+
         for (const catName of categoriesList) {
             const cat = await Category.create({
                 name: catName,
@@ -354,7 +354,7 @@ const seedData = async (shouldExit = true) => {
 
             for (const item of items) {
                 const restObj = restaurants[itemIndex % restaurants.length];
-                
+
                 foodsData.push({
                     name: item.name,
                     description: item.description,

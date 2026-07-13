@@ -134,7 +134,7 @@
       });
       const json = await res.json();
       if (json.success) {
-        window.location.href = `/orders/success/${json.orderId}`;
+        window.location.href = `/order-success/${json.orderId}`;
       } else {
         alert(json.message || 'Could not place order.');
         btn.disabled = false;

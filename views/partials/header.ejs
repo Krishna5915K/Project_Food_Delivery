@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - FoodClone</title>
+  <title>
+    <%= title %> - Food Platform
+  </title>
   <link rel="stylesheet" href="/css/customer.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <header>
     <a href="/" class="brand">
       <i class="fa-solid fa-utensils" style="color:var(--accent-color); font-size:1.6rem;"></i>
-      <h1>FoodClone</h1>
+      <h1>Food Platform</h1>
     </a>
-    
+
     <nav class="nav-links">
       <a href="/" class="<%= title === 'Home' ? 'active' : '' %>">Home</a>
       <a href="/restaurants" class="<%= title === 'Restaurants' ? 'active' : '' %>">Restaurants</a>
       <a href="/wishlist" class="<%= title === 'My Wishlist' ? 'active' : '' %>">Wishlist</a>
       <a href="/orders/history" class="<%= title === 'Order History' ? 'active' : '' %>">My Orders</a>
     </nav>
-    
+
     <div class="user-menu">
       <a href="/cart" class="btn btn-secondary btn-sm" style="position: relative;">
         <i class="fa-solid fa-cart-shopping"></i> Cart
       </a>
-      
+
       <% if (locals.user) { %>
         <a href="/profile" class="btn btn-primary btn-sm">
-          <i class="fa-solid fa-circle-user"></i> <%= user.name.split(' ')[0] %>
+          <i class="fa-solid fa-circle-user"></i>
+          <%= user.name.split(' ')[0] %>
         </a>
         <a href="/logout" class="btn btn-secondary btn-sm" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>

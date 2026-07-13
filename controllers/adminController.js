@@ -19,7 +19,7 @@ class AdminController {
             const userCount = await User.countDocuments();
             const restaurantCount = await Restaurant.countDocuments();
             const orderCount = await Order.countDocuments();
-            
+
             // Total revenue
             const payments = await Payment.find({ status: 'completed' });
             const totalRevenue = payments.reduce((sum, p) => sum + p.amount, 0);
@@ -31,8 +31,8 @@ class AdminController {
                 .sort({ createdAt: -1 })
                 .limit(5);
 
-            res.render('admin-dashboard', { 
-                title: 'Admin Dashboard', 
+            res.render('admin-dashboard', {
+                title: 'Admin Dashboard',
                 user: req.user,
                 stats: { userCount, restaurantCount, orderCount, totalRevenue },
                 recentOrders
@@ -121,8 +121,8 @@ class AdminController {
                 { $group: { _id: "$orderStatus", count: { $sum: 1 } } }
             ]);
 
-            res.render('admin-reports', { 
-                title: 'Sales & System Reports', 
+            res.render('admin-reports', {
+                title: 'Sales & System Reports',
                 user: req.user,
                 report: { revenue, totalOrders: orders.length, breakdown: orderStatusBreakdown }
             });
@@ -146,8 +146,8 @@ class AdminController {
             let settings = await Setting.find().sort({ key: 1 });
             if (settings.length === 0) {
                 const defaults = [
-                    { key: 'site_name', value: 'FoodClone', description: 'Name of the platform' },
-                    { key: 'contact_email', value: 'support@foodclone.com', description: 'Support contact email' },
+                    { key: 'site_name', value: 'Food Platform', description: 'Name of the platform' },
+                    { key: 'contact_email', value: 'support@Food Platform.com', description: 'Support contact email' },
                     { key: 'commission_rate', value: '10', description: 'Restaurant order commission percentage (%)' },
                     { key: 'base_delivery_charge', value: '40', description: 'Flat base delivery pay for rider per run (₹)' }
                 ];
@@ -208,16 +208,16 @@ class AdminController {
         try {
             const { id } = req.params;
             const { name, email, phone, role, permissions, status } = req.body;
-            
+
             const updates = { name, email, phone, role, status };
             if (permissions) {
                 updates.permissions = Array.isArray(permissions) ? permissions : [permissions];
             } else if (role === 'restaurant_owner') {
                 updates.permissions = []; // If empty array / cleared
             }
-            
+
             const updatedUser = await User.findByIdAndUpdate(id, updates, { returnDocument: 'after' });
-            
+
             if (role === 'delivery_boy') {
                 const { vehicleType, vehicleNumber, licenseNumber } = req.body;
                 if (vehicleType || vehicleNumber || licenseNumber) {
@@ -278,7 +278,7 @@ class AdminController {
         try {
             const { id } = req.params;
             const { isApproved } = req.body;
-            
+
             const restaurant = await Restaurant.findByIdAndUpdate(id, { isApproved }, { returnDocument: 'after' });
             res.status(200).json({ success: true, message: 'Restaurant status updated.', data: restaurant });
         } catch (error) {
@@ -310,7 +310,7 @@ class AdminController {
     async createOffer(req, res) {
         try {
             const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit, restaurant } = req.body;
-            
+
             const offerData = {
                 code,
                 discountType,
@@ -321,7 +321,7 @@ class AdminController {
                 isActive: isActive === 'true' || isActive === true,
                 usageLimit: parseInt(usageLimit, 10) || 1
             };
-            
+
             if (restaurant && restaurant.trim() !== '') {
                 offerData.restaurant = restaurant;
             }
@@ -337,7 +337,7 @@ class AdminController {
         try {
             const { id } = req.params;
             const { code, discountType, discountValue, minOrderValue, maxDiscountValue, expiresAt, isActive, usageLimit, restaurant } = req.body;
-            
+
             const offerData = {
                 code,
                 discountType,
@@ -348,7 +348,7 @@ class AdminController {
                 isActive: isActive === 'true' || isActive === true,
                 usageLimit: parseInt(usageLimit, 10) || 1
             };
-            
+
             if (restaurant && restaurant.trim() !== '') {
                 offerData.restaurant = restaurant;
             } else {

@@ -101,7 +101,7 @@
   async function updateQty(cartItemId, newQty) {
     try {
       const res = await fetch(`/api/v1/cart/${cartItemId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity: newQty })
       });

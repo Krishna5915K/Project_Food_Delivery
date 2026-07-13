@@ -1,366 +1,387 @@
 <%- include('partials/admin-header') %>
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
-  <div>
-    <p class="text-muted">Display, filter, and modify system accounts or create administrative staff.</p>
-  </div>
-  <button class="btn btn-primary" onclick="openModal()"><i class="fa-solid fa-user-plus"></i> Create Staff User</button>
-</div>
-
-<div class="table-card">
-  <table>
-    <thead>
-      <tr>
-        <th>Full Name</th>
-        <th>Email ID</th>
-        <th>Phone</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% users.forEach(u => { %>
-        <tr>
-          <td><strong><%= u.name %></strong></td>
-          <td><%= u.email %></td>
-          <td><%= u.phone || 'N/A' %></td>
-          <td>
-            <span style="text-transform:capitalize; font-weight:600;"><%= u.role.replace('_', ' ') %></span>
-          </td>
-          <td>
-            <span class="badge <%= u.status === 'active' ? 'badge-success' : 'badge-danger' %>"><%= u.status %></span>
-          </td>
-          <td>
-            <div style="display:flex; gap:0.5rem; align-items:center;">
-              <% if (u.status === 'active') { %>
-                <button class="btn btn-secondary btn-sm" onclick="toggleUserStatus('<%= u._id %>', 'inactive')" style="color:var(--danger-color);"><i class="fa-solid fa-ban"></i> Deactivate</button>
-              <% } else { %>
-                <button class="btn btn-secondary btn-sm" onclick="toggleUserStatus('<%= u._id %>', 'active')" style="color:var(--success-color);"><i class="fa-solid fa-circle-check"></i> Activate</button>
-              <% } %>
-              <button class="btn btn-primary btn-sm" onclick="openEditModal('<%= u._id %>')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-            </div>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</div>
-
-<!-- Add User Modal -->
-<div id="userModal" class="modal">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-      <h3 style="font-size:1.25rem; font-weight:800; color:white;">Create Staff Account</h3>
-      <button onclick="closeModal()" style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+    <div>
+      <p class="text-muted">Display, filter, and modify system accounts or create administrative staff.</p>
     </div>
+    <button class="btn btn-primary" onclick="openModal()"><i class="fa-solid fa-user-plus"></i> Create Staff
+      User</button>
+  </div>
 
-    <form id="create-user-form" style="display:flex; flex-direction:column; gap:1rem;">
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" class="form-input" required placeholder="John Doe">
-      </div>
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" class="form-input" required placeholder="staff@foodclone.com">
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" class="form-input" required placeholder="+919876543210">
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" class="form-input" required placeholder="••••••••" minlength="6">
-      </div>
-      <div class="form-group">
-        <label for="role">Assign Role</label>
-        <select id="role" class="form-select" onchange="toggleFields()" required>
-          <option value="admin">System Admin</option>
-          <option value="restaurant_owner">Restaurant Owner</option>
-          <option value="delivery_boy">Delivery Rider</option>
-        </select>
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Email ID</th>
+          <th>Phone</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u=> { %>
+          <tr>
+            <td><strong>
+                <%= u.name %>
+              </strong></td>
+            <td>
+              <%= u.email %>
+            </td>
+            <td>
+              <%= u.phone || 'N/A' %>
+            </td>
+            <td>
+              <span style="text-transform:capitalize; font-weight:600;">
+                <%= u.role.replace('_', ' ' ) %>
+              </span>
+            </td>
+            <td>
+              <span class="badge <%= u.status === 'active' ? 'badge-success' : 'badge-danger' %>">
+                <%= u.status %>
+              </span>
+            </td>
+            <td>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <% if (u.status==='active' ) { %>
+                  <button class="btn btn-secondary btn-sm" onclick="toggleUserStatus('<%= u._id %>', 'inactive')"
+                    style="color:var(--danger-color);"><i class="fa-solid fa-ban"></i> Deactivate</button>
+                  <% } else { %>
+                    <button class="btn btn-secondary btn-sm" onclick="toggleUserStatus('<%= u._id %>', 'active')"
+                      style="color:var(--success-color);"><i class="fa-solid fa-circle-check"></i> Activate</button>
+                    <% } %>
+                      <button class="btn btn-primary btn-sm" onclick="openEditModal('<%= u._id %>')"><i
+                          class="fa-solid fa-pen-to-square"></i> Edit</button>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.25rem; font-weight:800; color:white;">Create Staff Account</h3>
+        <button onclick="closeModal()"
+          style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.2rem;"><i
+            class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Permissions list for Owner in create modal -->
-      <div id="create-owner-permissions" style="display:none; flex-direction:column; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:1rem;">
-        <label style="font-weight:700; color:white; margin-bottom:0.25rem;">Owner Permissions</label>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="manage_restaurant" checked> Restaurant Details
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="manage_menu" checked> Menu Management
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="manage_orders" checked> Orders & Dispatch
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="manage_offers" checked> Offers & Coupons
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="view_statistics" checked> Platform Analytics
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="create-perm-checkbox" value="monitor_riders" checked> Monitor Riders
-          </label>
-        </div>
-      </div>
-
-      <!-- Optional fields for delivery boy -->
-      <div id="delivery-fields" style="display:none; flex-direction:column; gap:1rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+      <form id="create-user-form" style="display:flex; flex-direction:column; gap:1rem;">
         <div class="form-group">
-          <label for="vehicleType">Vehicle Type</label>
-          <select id="vehicleType" class="form-select">
-            <option value="bike">Motorbike</option>
-            <option value="scooter">Scooter</option>
-            <option value="bicycle">Bicycle</option>
+          <label for="name">Full Name</label>
+          <input type="text" id="name" class="form-input" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-input" required placeholder="staff@Food Platform.com">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" class="form-input" required placeholder="+919876543210">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-input" required placeholder="••••••••" minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="role">Assign Role</label>
+          <select id="role" class="form-select" onchange="toggleFields()" required>
+            <option value="admin">System Admin</option>
+            <option value="restaurant_owner">Restaurant Owner</option>
+            <option value="delivery_boy">Delivery Rider</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="vehicleNumber">Vehicle Number</label>
-          <input type="text" id="vehicleNumber" class="form-input" placeholder="KA-01-XX-XXXX">
-        </div>
-        <div class="form-group">
-          <label for="licenseNumber">Driving License Number</label>
-          <input type="text" id="licenseNumber" class="form-input" placeholder="DL-XXXXXXXXXXXXX">
-        </div>
-      </div>
 
-      <button type="submit" id="submitBtn" class="btn btn-primary" style="margin-top:1rem;">Register Account</button>
-    </form>
-  </div>
-</div>
+        <!-- Permissions list for Owner in create modal -->
+        <div id="create-owner-permissions"
+          style="display:none; flex-direction:column; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+          <label style="font-weight:700; color:white; margin-bottom:0.25rem;">Owner Permissions</label>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="manage_restaurant" checked> Restaurant Details
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="manage_menu" checked> Menu Management
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="manage_orders" checked> Orders & Dispatch
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="manage_offers" checked> Offers & Coupons
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="view_statistics" checked> Platform Analytics
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="create-perm-checkbox" value="monitor_riders" checked> Monitor Riders
+            </label>
+          </div>
+        </div>
 
-<!-- Edit User Modal -->
-<div id="editUserModal" class="modal">
-  <div class="modal-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-      <h3 style="font-size:1.25rem; font-weight:800; color:white;">Edit Account & Permissions</h3>
-      <button onclick="closeEditModal()" style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.2rem;"><i class="fa-solid fa-xmark"></i></button>
+        <!-- Optional fields for delivery boy -->
+        <div id="delivery-fields"
+          style="display:none; flex-direction:column; gap:1rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+          <div class="form-group">
+            <label for="vehicleType">Vehicle Type</label>
+            <select id="vehicleType" class="form-select">
+              <option value="bike">Motorbike</option>
+              <option value="scooter">Scooter</option>
+              <option value="bicycle">Bicycle</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="vehicleNumber">Vehicle Number</label>
+            <input type="text" id="vehicleNumber" class="form-input" placeholder="KA-01-XX-XXXX">
+          </div>
+          <div class="form-group">
+            <label for="licenseNumber">Driving License Number</label>
+            <input type="text" id="licenseNumber" class="form-input" placeholder="DL-XXXXXXXXXXXXX">
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary" style="margin-top:1rem;">Register Account</button>
+      </form>
     </div>
-
-    <form id="edit-user-form" style="display:flex; flex-direction:column; gap:1rem;">
-      <input type="hidden" id="edit-userId">
-      <div class="form-group">
-        <label for="edit-name">Full Name</label>
-        <input type="text" id="edit-name" class="form-input" required placeholder="John Doe">
-      </div>
-      <div class="form-group">
-        <label for="edit-email">Email Address</label>
-        <input type="email" id="edit-email" class="form-input" required placeholder="staff@foodclone.com">
-      </div>
-      <div class="form-group">
-        <label for="edit-phone">Phone Number</label>
-        <input type="tel" id="edit-phone" class="form-input" required placeholder="+919876543210">
-      </div>
-      <div class="form-group">
-        <label for="edit-role">Role</label>
-        <select id="edit-role" class="form-select" onchange="toggleEditFields()" required>
-          <option value="admin">System Admin</option>
-          <option value="restaurant_owner">Restaurant Owner</option>
-          <option value="delivery_boy">Delivery Rider</option>
-          <option value="customer">Customer</option>
-        </select>
-      </div>
-
-      <!-- Permissions list for Owner in edit modal -->
-      <div id="edit-owner-permissions" style="display:none; flex-direction:column; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:1rem;">
-        <label style="font-weight:700; color:white; margin-bottom:0.25rem;">Owner Permissions</label>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="manage_restaurant"> Restaurant Details
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="manage_menu"> Menu Management
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="manage_orders"> Orders & Dispatch
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="manage_offers"> Offers & Coupons
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="view_statistics"> Platform Analytics
-          </label>
-          <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
-            <input type="checkbox" class="edit-perm-checkbox" value="monitor_riders"> Monitor Riders
-          </label>
-        </div>
-      </div>
-
-      <button type="submit" id="editSubmitBtn" class="btn btn-primary" style="margin-top:1rem;">Save Changes</button>
-    </form>
   </div>
-</div>
 
-<script>
-  // Expose users object array to frontend JS
-  const systemUsers = <%- JSON.stringify(users) %>;
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="font-size:1.25rem; font-weight:800; color:white;">Edit Account & Permissions</h3>
+        <button onclick="closeEditModal()"
+          style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.2rem;"><i
+            class="fa-solid fa-xmark"></i></button>
+      </div>
 
-  function openModal() {
-    document.getElementById('userModal').style.display = 'flex';
-  }
-  
-  function closeModal() {
-    document.getElementById('userModal').style.display = 'none';
-  }
+      <form id="edit-user-form" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="edit-userId">
+        <div class="form-group">
+          <label for="edit-name">Full Name</label>
+          <input type="text" id="edit-name" class="form-input" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label for="edit-email">Email Address</label>
+          <input type="email" id="edit-email" class="form-input" required placeholder="staff@Food Platform.com">
+        </div>
+        <div class="form-group">
+          <label for="edit-phone">Phone Number</label>
+          <input type="tel" id="edit-phone" class="form-input" required placeholder="+919876543210">
+        </div>
+        <div class="form-group">
+          <label for="edit-role">Role</label>
+          <select id="edit-role" class="form-select" onchange="toggleEditFields()" required>
+            <option value="admin">System Admin</option>
+            <option value="restaurant_owner">Restaurant Owner</option>
+            <option value="delivery_boy">Delivery Rider</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
 
-  function openEditModal(userId) {
-    const userObj = systemUsers.find(u => u._id === userId);
-    if (!userObj) return;
+        <!-- Permissions list for Owner in edit modal -->
+        <div id="edit-owner-permissions"
+          style="display:none; flex-direction:column; gap:0.5rem; border-top:1px solid var(--border-color); padding-top:1rem;">
+          <label style="font-weight:700; color:white; margin-bottom:0.25rem;">Owner Permissions</label>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; font-size:0.85rem;">
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="manage_restaurant"> Restaurant Details
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="manage_menu"> Menu Management
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="manage_orders"> Orders & Dispatch
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="manage_offers"> Offers & Coupons
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="view_statistics"> Platform Analytics
+            </label>
+            <label style="display:flex; gap:0.5rem; align-items:center; color:var(--text-secondary); cursor:pointer;">
+              <input type="checkbox" class="edit-perm-checkbox" value="monitor_riders"> Monitor Riders
+            </label>
+          </div>
+        </div>
 
-    document.getElementById('edit-userId').value = userObj._id;
-    document.getElementById('edit-name').value = userObj.name;
-    document.getElementById('edit-email').value = userObj.email;
-    document.getElementById('edit-phone').value = userObj.phone || '';
-    document.getElementById('edit-role').value = userObj.role;
+        <button type="submit" id="editSubmitBtn" class="btn btn-primary" style="margin-top:1rem;">Save Changes</button>
+      </form>
+    </div>
+  </div>
 
-    // Reset checkboxes
-    const checkboxes = document.querySelectorAll('.edit-perm-checkbox');
-    checkboxes.forEach(cb => {
-      cb.checked = userObj.permissions && userObj.permissions.includes(cb.value);
-    });
+  <script>
+    // Expose users object array to frontend JS
+    const systemUsers = <% - JSON.stringify(users) %>;
 
-    toggleEditFields();
-    document.getElementById('editUserModal').style.display = 'flex';
-  }
-
-  function closeEditModal() {
-    document.getElementById('editUserModal').style.display = 'none';
-  }
-
-  function toggleFields() {
-    const role = document.getElementById('role').value;
-    const deliveryFields = document.getElementById('delivery-fields');
-    const ownerPermissions = document.getElementById('create-owner-permissions');
-    
-    if (role === 'delivery_boy') {
-      deliveryFields.style.display = 'flex';
-      ownerPermissions.style.display = 'none';
-    } else if (role === 'restaurant_owner') {
-      deliveryFields.style.display = 'none';
-      ownerPermissions.style.display = 'flex';
-    } else {
-      deliveryFields.style.display = 'none';
-      ownerPermissions.style.display = 'none';
+    function openModal() {
+      document.getElementById('userModal').style.display = 'flex';
     }
-  }
 
-  function toggleEditFields() {
-    const role = document.getElementById('edit-role').value;
-    const ownerPermissions = document.getElementById('edit-owner-permissions');
-    if (role === 'restaurant_owner') {
-      ownerPermissions.style.display = 'flex';
-    } else {
-      ownerPermissions.style.display = 'none';
+    function closeModal() {
+      document.getElementById('userModal').style.display = 'none';
     }
-  }
 
-  async function toggleUserStatus(userId, newStatus) {
-    if (!confirm(`Are you sure you want to set user status to ${newStatus}?`)) return;
-    try {
-      const res = await fetch(`/api/v1/admin/users/${userId}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
+    function openEditModal(userId) {
+      const userObj = systemUsers.find(u => u._id === userId);
+      if (!userObj) return;
+
+      document.getElementById('edit-userId').value = userObj._id;
+      document.getElementById('edit-name').value = userObj.name;
+      document.getElementById('edit-email').value = userObj.email;
+      document.getElementById('edit-phone').value = userObj.phone || '';
+      document.getElementById('edit-role').value = userObj.role;
+
+      // Reset checkboxes
+      const checkboxes = document.querySelectorAll('.edit-perm-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = userObj.permissions && userObj.permissions.includes(cb.value);
       });
-      const json = await res.json();
-      if (json.success) {
-        window.location.reload();
+
+      toggleEditFields();
+      document.getElementById('editUserModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editUserModal').style.display = 'none';
+    }
+
+    function toggleFields() {
+      const role = document.getElementById('role').value;
+      const deliveryFields = document.getElementById('delivery-fields');
+      const ownerPermissions = document.getElementById('create-owner-permissions');
+
+      if (role === 'delivery_boy') {
+        deliveryFields.style.display = 'flex';
+        ownerPermissions.style.display = 'none';
+      } else if (role === 'restaurant_owner') {
+        deliveryFields.style.display = 'none';
+        ownerPermissions.style.display = 'flex';
       } else {
-        alert(json.message || 'Failed to update status.');
+        deliveryFields.style.display = 'none';
+        ownerPermissions.style.display = 'none';
       }
-    } catch (err) {
-      alert('Network error.');
     }
-  }
 
-  document.getElementById('create-user-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
-
-    // Capture permissions checkboxes
-    const permElements = document.querySelectorAll('.create-perm-checkbox:checked');
-    const permissions = Array.from(permElements).map(el => el.value);
-
-    const payload = {
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      password: document.getElementById('password').value,
-      role: document.getElementById('role').value,
-      permissions: permissions,
-      vehicleType: document.getElementById('vehicleType').value,
-      vehicleNumber: document.getElementById('vehicleNumber').value.trim(),
-      licenseNumber: document.getElementById('licenseNumber').value.trim()
-    };
-
-    try {
-      const res = await fetch('/api/v1/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
-      if (json.success) {
-        alert('Staff account created successfully!');
-        window.location.reload();
+    function toggleEditFields() {
+      const role = document.getElementById('edit-role').value;
+      const ownerPermissions = document.getElementById('edit-owner-permissions');
+      if (role === 'restaurant_owner') {
+        ownerPermissions.style.display = 'flex';
       } else {
-        alert(json.message || 'Error creating account.');
+        ownerPermissions.style.display = 'none';
+      }
+    }
+
+    async function toggleUserStatus(userId, newStatus) {
+      if (!confirm(`Are you sure you want to set user status to ${newStatus}?`)) return;
+      try {
+        const res = await fetch(`/api/v1/admin/users/${userId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const json = await res.json();
+        if (json.success) {
+          window.location.reload();
+        } else {
+          alert(json.message || 'Failed to update status.');
+        }
+      } catch (err) {
+        alert('Network error.');
+      }
+    }
+
+    document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating...';
+
+      // Capture permissions checkboxes
+      const permElements = document.querySelectorAll('.create-perm-checkbox:checked');
+      const permissions = Array.from(permElements).map(el => el.value);
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value,
+        permissions: permissions,
+        vehicleType: document.getElementById('vehicleType').value,
+        vehicleNumber: document.getElementById('vehicleNumber').value.trim(),
+        licenseNumber: document.getElementById('licenseNumber').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/v1/admin/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          alert('Staff account created successfully!');
+          window.location.reload();
+        } else {
+          alert(json.message || 'Error creating account.');
+          btn.disabled = false;
+          btn.innerHTML = 'Register Account';
+        }
+      } catch (err) {
+        alert('Server error.');
         btn.disabled = false;
         btn.innerHTML = 'Register Account';
       }
-    } catch (err) {
-      alert('Server error.');
-      btn.disabled = false;
-      btn.innerHTML = 'Register Account';
-    }
-  });
+    });
 
-  document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('editSubmitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    document.getElementById('edit-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('editSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
-    const userId = document.getElementById('edit-userId').value;
-    const role = document.getElementById('edit-role').value;
+      const userId = document.getElementById('edit-userId').value;
+      const role = document.getElementById('edit-role').value;
 
-    // Capture permissions checkboxes
-    const permElements = document.querySelectorAll('.edit-perm-checkbox:checked');
-    const permissions = Array.from(permElements).map(el => el.value);
+      // Capture permissions checkboxes
+      const permElements = document.querySelectorAll('.edit-perm-checkbox:checked');
+      const permissions = Array.from(permElements).map(el => el.value);
 
-    const payload = {
-      name: document.getElementById('edit-name').value.trim(),
-      email: document.getElementById('edit-email').value.trim(),
-      phone: document.getElementById('edit-phone').value.trim(),
-      role: role,
-      permissions: role === 'restaurant_owner' ? permissions : []
-    };
+      const payload = {
+        name: document.getElementById('edit-name').value.trim(),
+        email: document.getElementById('edit-email').value.trim(),
+        phone: document.getElementById('edit-phone').value.trim(),
+        role: role,
+        permissions: role === 'restaurant_owner' ? permissions : []
+      };
 
-    try {
-      const res = await fetch(`/api/v1/admin/users/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
-      if (json.success) {
-        alert('User details and permissions updated successfully!');
-        window.location.reload();
-      } else {
-        alert(json.message || 'Error updating account.');
+      try {
+        const res = await fetch(`/api/v1/admin/users/${userId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          alert('User details and permissions updated successfully!');
+          window.location.reload();
+        } else {
+          alert(json.message || 'Error updating account.');
+          btn.disabled = false;
+          btn.innerHTML = 'Save Changes';
+        }
+      } catch (err) {
+        alert('Server error.');
         btn.disabled = false;
         btn.innerHTML = 'Save Changes';
       }
-    } catch (err) {
-      alert('Server error.');
-      btn.disabled = false;
-      btn.innerHTML = 'Save Changes';
-    }
-  });
-</script>
+    });
+  </script>
 
-<%- include('partials/admin-footer') %>
+  <%- include('partials/admin-footer') %>

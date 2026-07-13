@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - FoodClone</title>
+  <title>
+    <%= title %> - Food Platform
+  </title>
   <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <main>
     <div class="glass-card">
@@ -27,7 +31,8 @@
           <label for="password">Password</label>
           <div class="password-wrapper" style="width: 100%;">
             <input id="password" type="password" class="form-input" placeholder="••••••••" required>
-            <button type="button" class="password-toggle-btn" onclick="togglePassword()"><i class="fa-solid fa-eye"></i></button>
+            <button type="button" class="password-toggle-btn" onclick="togglePassword()"><i
+                class="fa-solid fa-eye"></i></button>
           </div>
         </div>
 
@@ -38,11 +43,15 @@
         <a href="/register">Create an account</a>
         <a href="/forgot-password">Forgot password?</a>
       </div>
-      
-      <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-around; font-size: 0.8rem;">
-        <a href="/admin/login" style="color: #60a5fa; text-decoration: none;"><i class="fa-solid fa-user-shield"></i> Admin Portal</a>
-        <a href="/owner/login" style="color: #ffb83d; text-decoration: none;"><i class="fa-solid fa-store"></i> Owner Portal</a>
-        <a href="/delivery/login" style="color: #34d399; text-decoration: none;"><i class="fa-solid fa-motorcycle"></i> Rider Portal</a>
+
+      <div
+        style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: space-around; font-size: 0.8rem;">
+        <a href="/admin/login" style="color: #60a5fa; text-decoration: none;"><i class="fa-solid fa-user-shield"></i>
+          Admin Portal</a>
+        <a href="/owner/login" style="color: #ffb83d; text-decoration: none;"><i class="fa-solid fa-store"></i> Owner
+          Portal</a>
+        <a href="/delivery/login" style="color: #34d399; text-decoration: none;"><i class="fa-solid fa-motorcycle"></i>
+          Rider Portal</a>
       </div>
     </div>
   </main>
@@ -97,4 +106,5 @@
     });
   </script>
 </body>
+
 </html>

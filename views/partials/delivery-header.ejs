@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - Rider Portal</title>
+  <title>
+    <%= title %> - Rider Portal
+  </title>
   <link rel="stylesheet" href="/css/delivery.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <header>
     <a href="/delivery/dashboard" class="brand" style="text-decoration:none; color:white;">
-      <h1>FoodClone <span>Rider</span></h1>
+      <h1>Food Platform <span>Rider</span></h1>
     </a>
-    
+
     <nav class="delivery-nav">
       <a href="/delivery/dashboard" class="<%= title === 'Delivery Dashboard' ? 'active' : '' %>">Dashboard</a>
       <a href="/delivery/assigned" class="<%= title === 'Assigned Orders' ? 'active' : '' %>">Assigned Runs</a>
@@ -22,5 +26,5 @@
       <a href="/delivery/profile" class="<%= title === 'My Profile' ? 'active' : '' %>">Profile</a>
     </nav>
   </header>
-  
+
   <main>

@@ -1,53 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - Partner Portal</title>
+  <title>
+    <%= title %> - Partner Portal
+  </title>
   <link rel="stylesheet" href="/css/owner.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <div class="sidebar">
-    <h2>FoodClone <span>Partner</span></h2>
-    
+    <h2>Food Platform <span>Partner</span></h2>
+
     <div class="sidebar-nav">
       <a href="/owner/dashboard" class="sidebar-link <%= title === 'Owner Dashboard' ? 'active' : '' %>">
         <i class="fa-solid fa-chart-pie"></i> Dashboard
       </a>
       <% if (user.permissions && user.permissions.includes('manage_restaurant')) { %>
-      <a href="/owner/restaurant" class="sidebar-link <%= title === 'My Restaurant' ? 'active' : '' %>">
-        <i class="fa-solid fa-store"></i> My Restaurant
-      </a>
-      <% } %>
-      <% if (user.permissions && user.permissions.includes('manage_menu')) { %>
-      <a href="/owner/menu" class="sidebar-link <%= title === 'Manage Menu' ? 'active' : '' %>">
-        <i class="fa-solid fa-bowl-food"></i> Manage Menu
-      </a>
-      <% } %>
-      <% if (user.permissions && user.permissions.includes('manage_orders')) { %>
-      <a href="/owner/orders" class="sidebar-link <%= title === 'Manage Orders' ? 'active' : '' %>">
-        <i class="fa-solid fa-truck-ramp-box"></i> Live Orders
-      </a>
-      <% } %>
-      <% if (user.permissions && user.permissions.includes('view_statistics')) { %>
-      <a href="/owner/sales" class="sidebar-link <%= title === 'Sales Report' ? 'active' : '' %>">
-        <i class="fa-solid fa-file-invoice-dollar"></i> Sales Report
-      </a>
-      <% } %>
-      <% if (user.permissions && user.permissions.includes('monitor_riders')) { %>
-      <a href="/owner/riders" class="sidebar-link <%= title === 'Monitor Riders' ? 'active' : '' %>">
-        <i class="fa-solid fa-motorcycle"></i> Monitor Riders
-      </a>
-      <% } %>
-      <% if (user.permissions && user.permissions.includes('manage_offers')) { %>
-      <a href="/owner/offers" class="sidebar-link <%= title === 'Manage Offers' ? 'active' : '' %>">
-        <i class="fa-solid fa-tags"></i> Manage Offers
-      </a>
-      <% } %>
-      <a href="/owner/profile" class="sidebar-link <%= title === 'My Profile' ? 'active' : '' %>">
-        <i class="fa-solid fa-user-gear"></i> Owner Profile
-      </a>
+        <a href="/owner/restaurant" class="sidebar-link <%= title === 'My Restaurant' ? 'active' : '' %>">
+          <i class="fa-solid fa-store"></i> My Restaurant
+        </a>
+        <% } %>
+          <% if (user.permissions && user.permissions.includes('manage_menu')) { %>
+            <a href="/owner/menu" class="sidebar-link <%= title === 'Manage Menu' ? 'active' : '' %>">
+              <i class="fa-solid fa-bowl-food"></i> Manage Menu
+            </a>
+            <% } %>
+              <% if (user.permissions && user.permissions.includes('manage_orders')) { %>
+                <a href="/owner/orders" class="sidebar-link <%= title === 'Manage Orders' ? 'active' : '' %>">
+                  <i class="fa-solid fa-truck-ramp-box"></i> Live Orders
+                </a>
+                <% } %>
+                  <% if (user.permissions && user.permissions.includes('view_statistics')) { %>
+                    <a href="/owner/sales" class="sidebar-link <%= title === 'Sales Report' ? 'active' : '' %>">
+                      <i class="fa-solid fa-file-invoice-dollar"></i> Sales Report
+                    </a>
+                    <% } %>
+                      <% if (user.permissions && user.permissions.includes('monitor_riders')) { %>
+                        <a href="/owner/riders" class="sidebar-link <%= title === 'Monitor Riders' ? 'active' : '' %>">
+                          <i class="fa-solid fa-motorcycle"></i> Monitor Riders
+                        </a>
+                        <% } %>
+                          <% if (user.permissions && user.permissions.includes('manage_offers')) { %>
+                            <a href="/owner/offers"
+                              class="sidebar-link <%= title === 'Manage Offers' ? 'active' : '' %>">
+                              <i class="fa-solid fa-tags"></i> Manage Offers
+                            </a>
+                            <% } %>
+                              <a href="/owner/profile"
+                                class="sidebar-link <%= title === 'My Profile' ? 'active' : '' %>">
+                                <i class="fa-solid fa-user-gear"></i> Owner Profile
+                              </a>
     </div>
 
     <div style="margin-top:auto;">
@@ -59,9 +65,13 @@
 
   <div class="owner-main">
     <div class="owner-header">
-      <h1><%= title %></h1>
+      <h1>
+        <%= title %>
+      </h1>
       <div style="display:flex; align-items:center; gap:0.5rem;">
         <i class="fa-solid fa-circle-user" style="font-size:1.5rem; color:var(--accent-color);"></i>
-        <strong style="font-size:0.95rem;"><%= user.name %></strong>
+        <strong style="font-size:0.95rem;">
+          <%= user.name %>
+        </strong>
       </div>
     </div>

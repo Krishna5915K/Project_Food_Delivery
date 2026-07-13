@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - FoodClone</title>
+  <title>
+    <%= title %> - Food Platform
+  </title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
   <header>
     <a href="/" class="brand">
       <i class="fa-solid fa-utensils" style="color:var(--accent-color); font-size:1.5rem;"></i>
-      <h1>FoodClone</h1>
+      <h1>Food Platform</h1>
     </a>
-    
+
     <div style="display:flex; align-items:center; gap:1.5rem;">
       <div class="role-switcher-container">
         <span class="role-btn active">
-          <i class="fa-solid fa-shield-halved"></i> <%= user.role.replace('_', ' ').toUpperCase() %>
+          <i class="fa-solid fa-shield-halved"></i>
+          <%= user.role.replace('_', ' ' ).toUpperCase() %>
         </span>
       </div>
-      
+
       <a href="/logout" class="btn btn-secondary btn-sm" style="border-radius:10px;">
         <i class="fa-solid fa-right-from-bracket"></i> Sign Out
       </a>
@@ -40,8 +45,10 @@
           <h3 class="item-title">Account Security</h3>
           <i class="fa-solid fa-lock" style="color:var(--success-color); font-size:1.25rem;"></i>
         </div>
-        <p class="text-muted" style="margin-bottom:0.75rem;">Your account credentials and security settings are fully active.</p>
-        <span class="badge" style="background:var(--success-bg); color:var(--success-color); padding:0.25rem 0.6rem; border-radius:6px; font-size:0.75rem; border:1px solid var(--success-border);">
+        <p class="text-muted" style="margin-bottom:0.75rem;">Your account credentials and security settings are fully
+          active.</p>
+        <span class="badge"
+          style="background:var(--success-bg); color:var(--success-color); padding:0.25rem 0.6rem; border-radius:6px; font-size:0.75rem; border:1px solid var(--success-border);">
           <i class="fa-solid fa-circle-check"></i> Secured
         </span>
       </div>
@@ -58,10 +65,12 @@
       <div class="glass-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
           <h3 class="item-title">Active Session</h3>
-          <i class="fa-solid fa-circle-dot" style="color:var(--info-color); font-size:1.25rem; animation: pulse 2s infinite;"></i>
+          <i class="fa-solid fa-circle-dot"
+            style="color:var(--info-color); font-size:1.25rem; animation: pulse 2s infinite;"></i>
         </div>
         <p class="text-muted" style="margin-bottom:0.75rem;">Connected locally from localhost:555 dev environment.</p>
-        <span class="badge" style="background:var(--info-bg); color:var(--info-color); padding:0.25rem 0.6rem; border-radius:6px; font-size:0.75rem; border:1px solid rgba(59, 130, 246, 0.3);">
+        <span class="badge"
+          style="background:var(--info-bg); color:var(--info-color); padding:0.25rem 0.6rem; border-radius:6px; font-size:0.75rem; border:1px solid rgba(59, 130, 246, 0.3);">
           <i class="fa-solid fa-bolt"></i> Live Port 555
         </span>
       </div>
@@ -71,28 +80,38 @@
     <div class="grid-2">
       <!-- Profile Card -->
       <div class="glass-card">
-        <h2 class="section-title"><i class="fa-solid fa-circle-user" style="color:var(--accent-color);"></i> Profile Details</h2>
+        <h2 class="section-title"><i class="fa-solid fa-circle-user" style="color:var(--accent-color);"></i> Profile
+          Details</h2>
         <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
           <div style="display:flex; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem;">
             <div style="width:120px; color:var(--text-secondary); font-weight:500;">Full Name</div>
-            <div style="color:white; font-weight:600;"><%= user.name %></div>
+            <div style="color:white; font-weight:600;">
+              <%= user.name %>
+            </div>
           </div>
           <div style="display:flex; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem;">
             <div style="width:120px; color:var(--text-secondary); font-weight:500;">Email ID</div>
-            <div style="color:white; font-weight:600;"><%= user.email %></div>
+            <div style="color:white; font-weight:600;">
+              <%= user.email %>
+            </div>
           </div>
           <div style="display:flex; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem;">
             <div style="width:120px; color:var(--text-secondary); font-weight:500;">Phone Number</div>
-            <div style="color:white; font-weight:600;"><%= user.phone || 'N/A' %></div>
+            <div style="color:white; font-weight:600;">
+              <%= user.phone || 'N/A' %>
+            </div>
           </div>
           <div style="display:flex; border-bottom:1px solid var(--glass-border); padding-bottom:0.75rem;">
             <div style="width:120px; color:var(--text-secondary); font-weight:500;">System Role</div>
-            <div style="color:white; font-weight:600; text-transform:capitalize;"><%= user.role.replace('_', ' ') %></div>
+            <div style="color:white; font-weight:600; text-transform:capitalize;">
+              <%= user.role.replace('_', ' ' ) %>
+            </div>
           </div>
           <div style="display:flex; padding-bottom:0.25rem;">
             <div style="width:120px; color:var(--text-secondary); font-weight:500;">Status</div>
             <div>
-              <span class="badge" style="background:var(--success-bg); color:var(--success-color); padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:600;">
+              <span class="badge"
+                style="background:var(--success-bg); color:var(--success-color); padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem; font-weight:600;">
                 <%= user.status.toUpperCase() %>
               </span>
             </div>
@@ -102,11 +121,13 @@
 
       <!-- Action Panel Card -->
       <div class="glass-card">
-        <h2 class="section-title"><i class="fa-solid fa-sliders" style="color:var(--accent-color);"></i> Workspace Console</h2>
-        <p class="text-muted" style="margin-bottom:1.5rem;">Quick actions and shortcuts customized based on your profile authorization level.</p>
-        
+        <h2 class="section-title"><i class="fa-solid fa-sliders" style="color:var(--accent-color);"></i> Workspace
+          Console</h2>
+        <p class="text-muted" style="margin-bottom:1.5rem;">Quick actions and shortcuts customized based on your profile
+          authorization level.</p>
+
         <div style="display:flex; flex-direction:column; gap:1rem;">
-          <% if (user.role === 'customer') { %>
+          <% if (user.role==='customer' ) { %>
             <button class="btn btn-primary w-100" onclick="alert('Redirecting to order dashboard...')">
               <i class="fa-solid fa-basket-shopping"></i> Order Food Items
             </button>
@@ -116,46 +137,56 @@
             <button class="btn btn-secondary w-100" onclick="alert('Opening address management...')">
               <i class="fa-solid fa-location-dot"></i> Manage Addresses
             </button>
-          <% } else if (user.role === 'restaurant_owner') { %>
-            <button class="btn btn-primary w-100" onclick="alert('Opening restaurant management panel...')">
-              <i class="fa-solid fa-store"></i> Manage Restaurant & Menu
-            </button>
-            <button class="btn btn-secondary w-100" onclick="alert('Viewing orders list...')">
-              <i class="fa-solid fa-list-check"></i> Manage Active Orders
-            </button>
-            <button class="btn btn-secondary w-100" onclick="alert('Opening analytics charts...')">
-              <i class="fa-solid fa-chart-line"></i> View Sales Dashboard
-            </button>
-          <% } else if (user.role === 'delivery_boy') { %>
-            <button class="btn btn-primary w-100" onclick="alert('Checking available runs...')">
-              <i class="fa-solid fa-truck-ramp-box"></i> View Active Deliveries
-            </button>
-            <button class="btn btn-secondary w-100" onclick="alert('Opening map router...')">
-              <i class="fa-solid fa-map-location-dot"></i> Route Navigator
-            </button>
-            <button class="btn btn-secondary w-100" onclick="alert('Opening wallet statement...')">
-              <i class="fa-solid fa-hand-holding-dollar"></i> Check Payouts
-            </button>
-          <% } else { %>
-            <button class="btn btn-primary w-100" onclick="alert('Entering admin dashboard...')">
-              <i class="fa-solid fa-user-gear"></i> System Administration
-            </button>
-          <% } %>
+            <% } else if (user.role==='restaurant_owner' ) { %>
+              <button class="btn btn-primary w-100" onclick="alert('Opening restaurant management panel...')">
+                <i class="fa-solid fa-store"></i> Manage Restaurant & Menu
+              </button>
+              <button class="btn btn-secondary w-100" onclick="alert('Viewing orders list...')">
+                <i class="fa-solid fa-list-check"></i> Manage Active Orders
+              </button>
+              <button class="btn btn-secondary w-100" onclick="alert('Opening analytics charts...')">
+                <i class="fa-solid fa-chart-line"></i> View Sales Dashboard
+              </button>
+              <% } else if (user.role==='delivery_boy' ) { %>
+                <button class="btn btn-primary w-100" onclick="alert('Checking available runs...')">
+                  <i class="fa-solid fa-truck-ramp-box"></i> View Active Deliveries
+                </button>
+                <button class="btn btn-secondary w-100" onclick="alert('Opening map router...')">
+                  <i class="fa-solid fa-map-location-dot"></i> Route Navigator
+                </button>
+                <button class="btn btn-secondary w-100" onclick="alert('Opening wallet statement...')">
+                  <i class="fa-solid fa-hand-holding-dollar"></i> Check Payouts
+                </button>
+                <% } else { %>
+                  <button class="btn btn-primary w-100" onclick="alert('Entering admin dashboard...')">
+                    <i class="fa-solid fa-user-gear"></i> System Administration
+                  </button>
+                  <% } %>
         </div>
       </div>
     </div>
   </main>
 
-  <footer style="margin-top:4rem; padding:2rem; text-align:center; border-top:1px solid var(--glass-border); color:var(--text-secondary); font-size:0.85rem;">
-    <p>&copy; 2026 FoodClone Delivery System. Running locally on Localhost:555</p>
+  <footer
+    style="margin-top:4rem; padding:2rem; text-align:center; border-top:1px solid var(--glass-border); color:var(--text-secondary); font-size:0.85rem;">
+    <p>&copy; 2026 Food Platform Delivery System. Running locally on Localhost:555</p>
   </footer>
 
   <style>
     @keyframes pulse {
-      0% { opacity: 0.4; }
-      50% { opacity: 1; }
-      100% { opacity: 0.4; }
+      0% {
+        opacity: 0.4;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.4;
+      }
     }
   </style>
 </body>
+
 </html>
