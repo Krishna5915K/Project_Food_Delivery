@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
-  <% // Pre-calculate view buttons classes const restaurantsBtnClass=view==='restaurants' ? 'btn-primary'
-    : 'btn-secondary' ; const dishesBtnClass=view==='dishes' ? 'btn-primary' : 'btn-secondary' ; %>
+  <% const restaurantsBtnClass = view === 'restaurants' ? 'btn-primary' : 'btn-secondary'; %>
+  <% const dishesBtnClass = view === 'dishes' ? 'btn-primary' : 'btn-secondary'; %>
 
     <div
       style="margin-bottom: 2rem; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
@@ -70,9 +70,7 @@
         style="text-decoration: none; white-space: nowrap;">
         🌐 All Categories
       </a>
-      <% const categoryEmojis={ 'Italian' : '🇮🇹 Italian' , 'Chinese' : '🥢 Chinese' , 'Indian' : '🍛 Indian'
-        , 'Fast Food' : '🍟 Fast Food' , 'Desserts' : '🧁 Desserts' , 'Beverages' : '🥤 Beverages' , 'Pizza'
-        : '🍕 Pizza' , 'Burgers' : '🍔 Burgers' }; %>
+      <% const categoryEmojis = { 'Italian': '🇮🇹 Italian', 'Chinese': '🥢 Chinese', 'Indian': '🍛 Indian', 'Fast Food': '🍟 Fast Food', 'Desserts': '🧁 Desserts', 'Beverages': '🥤 Beverages', 'Pizza': '🍕 Pizza', 'Burgers': '🍔 Burgers' }; %>
         <% cuisines.forEach(c=> { %>
           <% const displayName=categoryEmojis[c] || c; %>
             <a href="/restaurants?cuisine=<%= c %>&view=<%= view %>&platform=<%= selectedPlatform %>&search=<%= search %>"
@@ -88,9 +86,8 @@
       <div class="grid-3">
         <% if (restaurants && restaurants.length> 0) { %>
           <% restaurants.forEach(res=> { %>
-            <% // Determine restaurant platform background color let resPlatformBg='var(--accent-color)' ; if
-              (res.platform==='Swiggy' ) { resPlatformBg='#fc8019' ; } else if (res.platform==='Zomato' ) {
-              resPlatformBg='#cb202d' ; } %>
+            <% let resPlatformBg = 'var(--accent-color)'; %>
+            <% if (res.platform === 'Swiggy') { resPlatformBg = '#fc8019'; } else if (res.platform === 'Zomato') { resPlatformBg = '#cb202d'; } %>
               <div class="glass-card" onclick="window.location.href='/restaurants/<%= res._id %>'"
                 style="cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height: 100%;">
                 <div>
@@ -150,10 +147,9 @@
         <div class="grid-3">
           <% if (foods && foods.length> 0) { %>
             <% foods.forEach(food=> { %>
-              <% // Determine food restaurant platform background color let foodPlatform='Food Platform' ; let
-                foodPlatformBg='var(--accent-color)' ; if (food.restaurant) { foodPlatform=food.restaurant.platform; if
-                (foodPlatform==='Swiggy' ) { foodPlatformBg='#fc8019' ; } else if (foodPlatform==='Zomato' ) {
-                foodPlatformBg='#cb202d' ; } } %>
+              <% let foodPlatform = food.restaurant ? food.restaurant.platform : 'Food Platform'; %>
+              <% let foodPlatformBg = 'var(--accent-color)'; %>
+              <% if (foodPlatform === 'Swiggy') { foodPlatformBg = '#fc8019'; } else if (foodPlatform === 'Zomato') { foodPlatformBg = '#cb202d'; } %>
                 <div class="glass-card"
                   style="display:flex; flex-direction:column; gap:0.75rem; justify-content:space-between; height: 100%;">
                   <div>
